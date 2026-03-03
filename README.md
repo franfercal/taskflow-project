@@ -9,12 +9,7 @@ Una aplicación web de **gestión de tareas y proyectos**
 - **Prioridades** - Asigna niveles de prioridad (Alta, Media, Baja)
 - **Fechas** - Añade fechas a tus tareas para mejor planificación
 - **Filtros** - Filtra tareas por:
-  - Todas las tareas
-  - Tareas de alta prioridad
-  - Tareas para hoy
-  - Tareas de esta semana
-  - Tareas completadas
-  - Tareas por proyecto específico
+  - Todas las tareas, Tareas de alta prioridad,Tareas para hoy, Tareas de esta semana, Tareas completadas, Tareas por proyecto específico.
 - **Persistencia de datos** - Elige entre:
   - **LocalStorage** (app.js) - Para navegadores estándar (No recomendado)
   - **IndexedDB** (app-indexdb.js) - Para mayor capacidad de almacenamiento
@@ -40,7 +35,7 @@ Una aplicación web de **gestión de tareas y proyectos**
 "Base de Datos"
 ```
 
-## Documentacion:
+## Documentación y Referencias:
 
 ### Para LocalStorage
   - **https://developer.mozilla.org/es/docs/Web/API/Window/localStorage**
