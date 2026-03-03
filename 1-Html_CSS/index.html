@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Tareas</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- cabezera    -->
+    <header>
+      <div class="logo">Task<span>Flow</span></div>
+      <div class="header-meta">
+        <span class="header-fecha" id="fecha-actual"></span>
+        <button class="btn-menu" id="btn-menu" aria-label="Abrir menú">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="avatar">Avatar</div>
+      </div>
+    </header>
+
+    <div class="wrapper">
+      <!-- aside -->
+      <aside id="sidebar">
+        <div class="sidebar-section">
+          <h3>Vistas</h3>
+          <nav>
+            <div class="nav-item active" data-vista="todas">
+              <span class="nav-icon">◈</span> Todas
+              <span class="nav-counter" id="cnt-todas">0</span>
+            </div>
+            <div class="nav-item" data-vista="hoy">
+              <span class="nav-icon">◎</span> Hoy
+              <span class="nav-counter" id="cnt-hoy">0</span>
+            </div>
+            <div class="nav-item" data-vista="semana">
+              <span class="nav-icon">◷</span> Esta semana
+              <span class="nav-counter" id="cnt-semana">0</span>
+            </div>
+            <div class="nav-item" data-vista="completadas-vista">
+              <span class="nav-icon">✓</span> Completadas
+              <span class="nav-counter" id="cnt-completadas">0</span>
+            </div>
+          </nav>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Proyectos</h3>
+          <nav id="nav-proyectos"></nav>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Progreso</h3>
+          <div class="estadisticas-grid">
+            <div class="estadistica-card">
+              <div class="estadistica-valor" id="est-total">0</div>
+              <div class="estadistica-nombre">Total</div>
+            </div>
+            <div class="estadistica-card">
+              <div class="estadistica-valor" id="est-completadas">0</div>
+              <div class="estadistica-nombre">Listas</div>
+            </div>
+          </div>
+          <div class="progress-block" style="margin-top: var(--espacio-4)">
+            <div class="progress-label">
+              <span>Progreso semanal</span>
+              <span id="est-porcentaje">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="est-fill" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- main -->
+      <main>
+        <div class="section-header">
+          <div class="section-title">
+            Mis Tareas
+            <small id="subtitle-pendientes">cargando...</small>
+          </div>
+          <button class="btn-nueva-tarea">+ Nueva tarea</button>
+        </div>
+
+        <!-- Filtros dinámicos -->
+        <div class="filters" id="filters"></div>
+
+        <!-- Contenedor dinámico de tareas -->
+        <div id="task-list"></div>
+      </main>
+    </div>
+
+    <!-- nueva tarea modal -->
+    <div id="modal-backdrop" class="modal-backdrop hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 class="modal-title">Nueva tarea</h2>
+          <button class="btn-close-modal" id="btn-close-modal">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="field">
+            <label>Título</label>
+            <input
+              type="text"
+              id="field-titulo"
+              placeholder="¿Qué hay que hacer?"
+              maxlength="80"
+            />
+          </div>
+          <div class="fields-row">
+            <div class="field">
+              <label>Proyecto</label>
+              <select id="field-proyecto"></select>
+            </div>
+            <div class="field">
+              <label>Prioridad</label>
+              <select id="field-prioridad">
+                <option value="alta">Alta</option>
+                <option value="media" selected>Media</option>
+                <option value="baja">Baja</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- crear nuevo proyecto -->
+          <div class="field" id="field-nuevo-proyecto" style="display: none">
+            <label>Nombre del nuevo proyecto</label>
+            <div style="display: flex; gap: var(--espacio-2)">
+              <input
+                type="text"
+                id="field-nombre-proyecto"
+                maxlength="30"
+                style="flex: 1"
+              />
+              <button
+                type="button"
+                id="btn-confirmar-proyecto"
+                class="btn-guardar"
+                style="
+                  white-space: nowrap;
+                  padding: var(--espacio-3) var(--espacio-4);
+                "
+              >
+                Crear
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Fecha / hora límite</label>
+            <input type="text" id="field-fecha" placeholder="Ej: Hoy, 17:00" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-cancelar" id="btn-cancelar-modal">Cancelar</button>
+          <button class="btn-guardar" id="btn-guardar-tarea">
+            Guardar tarea
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app-indexdb.js"></script>
+  </body>
+</html>
