@@ -4,7 +4,7 @@
 // estados
 
 const State = {
-  proyectos: ["Diseño", "Front End", "Base de Datos", "Base de Datos."],
+  proyectos: ["Desarrollo Web", "FrontEnd", "BackEnd", "JS", "Python"],
   tareas: [],
   filtroActivo: "todas",
   siguienteId: 1,
