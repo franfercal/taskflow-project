@@ -1,6 +1,24 @@
 /*Hace y actualiza la interfaz de usuario */
 
 const Render = {
+  /* inicializa listeners de tareas una sola vez */
+  init() {
+    const contenedor = Utils.getElement("task-list");
+    if (!contenedor) return;
+
+    contenedor.addEventListener("click", (e) => {
+      if (e.target.classList.contains("btn-eliminar")) {
+        e.stopPropagation();
+        TareasController.eliminar(Number(e.target.dataset.id));
+        return;
+      }
+      const tarjeta = e.target.closest(".task-card");
+      if (tarjeta) {
+        TareasController.alternarHecha(Number(tarjeta.dataset.id));
+      }
+    });
+  },
+
   /* renderiza filtros  */
   renderizarFiltros() {
     const contenedor = Utils.getElement("filters");
@@ -97,7 +115,6 @@ const Render = {
         this.renderizarGrupo("Completadas", completadas)
     );
 
-    this.agregarEventListenersTareas();
     Estadisticas.actualizar();
   },
 
@@ -138,27 +155,4 @@ const Render = {
       </div>`;
   },
 
-  /* agreega event listeners a tarjetas de tareas */
-  agregarEventListenersTareas() {
-    const contenedor = Utils.getElement("task-list");
-    if (!contenedor) return;
-
-    // event delegation marcar hecha
-    contenedor.addEventListener("click", (e) => {
-      const tarjeta = e.target.closest(".task-card");
-      if (tarjeta && !e.target.classList.contains("btn-eliminar")) {
-        const id = Number(tarjeta.dataset.id);
-        TareasController.alternarHecha(id);
-      }
-    });
-
-    // event delegation eliminar
-    contenedor.addEventListener("click", (e) => {
-      if (e.target.classList.contains("btn-eliminar")) {
-        e.stopPropagation();
-        const id = Number(e.target.dataset.id);
-        TareasController.eliminar(id);
-      }
-    });
-  },
 };
