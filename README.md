@@ -37,14 +37,17 @@ Una aplicación web de **gestión de tareas y proyectos**
 
 ## Documentación y Referencias:
 
-### Para LocalStorage
-  - **https://developer.mozilla.org/es/docs/Web/API/Window/localStorage**
-  - **https://es.javascript.info/localstorage**
-
-### Para IndexDB
-  - **https://developer.mozilla.org/es/docs/Web/API/IndexedDB_API**
-  - **https://es.javascript.info/indexeddb**
+### HTML
+   - **https://developer.mozilla.org/es/docs/Learn_web_development/Core/Structuring_content**
+   - **https://developer.mozilla.org/es/docs/Learn_web_development/Core/Structuring_content**
+   - **https://www.w3schools.com/html/**
+### Javascript
+   - **https://es.javascript.info/**
+   - **https://developer.mozilla.org/es/docs/Web/JavaScript**
+#### Para LocalStorage
+   - **https://developer.mozilla.org/es/docs/Web/API/Window/localStorage**
+   - **https://es.javascript.info/localstorage**
 
 ### CSS y Media Query
-  - **https://www.w3schools.com/css/default.asp**
-  - **https://www.w3schools.com/css/css_rwd_mediaqueries.asp**
+   - **https://www.w3schools.com/css/default.asp**
+   - **https://www.w3schools.com/css/css_rwd_mediaqueries.asp**
