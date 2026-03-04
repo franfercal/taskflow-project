@@ -52,7 +52,7 @@ const Modal = {
         .map(
           (p) => `
           <option value="${p}" ${p === valorActual ? "selected" : ""}>
-            ${Utils.sanitizar(p)}
+            ${(p)}
           </option>`
         )
         .join("") + `<option value="__nuevo__">+ Nuevo proyecto…</option>`

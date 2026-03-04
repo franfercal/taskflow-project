@@ -23,7 +23,7 @@ const Render = {
           class="filter-chip ${State.filtroActivo === f.valor ? "active" : ""}" 
           data-filtro="${f.valor}"
         >
-          ${Utils.sanitizar(f.etiqueta)}
+          ${(f.etiqueta)}
         </button>`
         )
         .join("")
@@ -55,9 +55,9 @@ const Render = {
           );
 
           return `
-          <div class="nav-item" data-vista="${Utils.sanitizar(proyecto)}">
+          <div class="nav-item" data-vista="${(proyecto)}">
             <span class="nav-icon">◆</span>
-            ${Utils.sanitizar(proyecto)}
+            ${(proyecto)}
             <span class="nav-counter">${pendientes}</span>
           </div>`;
         })
@@ -121,9 +121,9 @@ const Render = {
       >
         <div class="checkbox">${tarea.hecha ? "✓" : ""}</div>
         <div class="task-info">
-          <div class="task-title">${Utils.sanitizar(tarea.titulo)}</div>
-          <span class="task-proyecto">${Utils.sanitizar(tarea.proyecto)}</span>
-          <span class="task-fecha">${Utils.sanitizar(tarea.fecha)}</span>
+          <div class="task-title">${(tarea.titulo)}</div>
+          <span class="task-proyecto">${(tarea.proyecto)}</span>
+          <span class="task-fecha">${(tarea.fecha)}</span>
         </div>
         <span class="badge badge-${tarea.prioridad}">
           ${tarea.prioridad}
