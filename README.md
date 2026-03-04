@@ -16,9 +16,9 @@ Una aplicación web de **gestión de tareas y proyectos**
 # TaskFlow V1
 
 ## Nuevas Características:
-- **Ahora podemos eliminar también proyectos, no solo tareas** - Ahora podemos gestionar totalmente los proyectos también
-- **Cambios en la creación de tareas** - Añadido calendario y reloj para poder seleccionar la hora y la fecha de entrega final (ahora no hace falta           escribirlo)
-- **Optimización en la fluidez** - En esta versión se han corregido problemas relacionados con la fluidez al eliminar o crear múltiples proyectos rápidamente.
+- **Ahora podemos eliminar también proyectos, no solo tareas** - Ahora podemos gestionar totalmente los proyectos
+- **Cambios en la creación de tareas** - Añadido calendario y reloj para poder seleccionar la hora y la fecha de entrega final
+- **Optimización en la fluidez** - En esta versión se han corregido problemas relacionados con la fluidez al eliminar o crear múltiples proyectos rápidamente
 - **Optimización de LocalStorage** - Ahora el alamacenamiento de datos con locastorage funciona, con eso se ha procedido a la eliminacion de la base de datos indexdb.
 
 
@@ -31,7 +31,8 @@ Una aplicación web de **gestión de tareas y proyectos**
 ### Javascript
    - **https://es.javascript.info/**
    - **https://developer.mozilla.org/es/docs/Web/JavaScript**
-#### Para LocalStorage
+   
+### Para LocalStorage
    - **https://developer.mozilla.org/es/docs/Web/API/Window/localStorage**
    - **https://es.javascript.info/localstorage**
 
