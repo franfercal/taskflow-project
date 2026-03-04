@@ -20,7 +20,7 @@ const Persistencia = {
         this.KEYS.SIGUIENTE_ID,
         State.siguienteId.toString()
       );
-      console.log("Datos guardadose");
+      console.log("Datos guardados");
     } catch (error) {
       console.error("Error al guardar", error);
     }

@@ -52,11 +52,6 @@ const TareasController = {
     return false;
   },
 
-  /* selector tarea ids */
-  obtener(id) {
-    return State.tareas.find((t) => t.id === id);
-  },
-
   /* actualiza todo rela con tareas */
   actualizarUI() {
     Render.renderizarTareas();

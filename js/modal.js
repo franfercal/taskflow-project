@@ -38,6 +38,7 @@ const Modal = {
   abrir() {
     this.sincronizarSelectProyecto();
     this.elementos.nuevoProyectoContainer.style.display = "none";
+    this.fpFecha.setDate(new Date(), true);
     this.elementos.backdrop.classList.remove("hidden");
     this.elementos.titulo.focus();
   },

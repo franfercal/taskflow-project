@@ -5,11 +5,34 @@ const Filtros = {
   definiciones: {
     todas: (tareas) => tareas,
     alta: (tareas) => tareas.filter((t) => t.prioridad === "alta"),
+    media: (tareas) => tareas.filter((t) => t.prioridad === "media"),
+    baja: (tareas) => tareas.filter((t) => t.prioridad === "baja"),
     hoy: (tareas) => {
       const hoy = new Date().toISOString().split("T")[0];
       return tareas.filter((t) => !t.hecha && t.fecha.startsWith(hoy));
     },
-    semana: (tareas) => tareas.filter((t) => !t.hecha),
+    semana: (tareas) => {
+      const ahora = new Date();
+      const inicioSemana = new Date(ahora);
+      inicioSemana.setDate(ahora.getDate() - ahora.getDay() + 1);
+      inicioSemana.setHours(0, 0, 0, 0);
+      const finSemana = new Date(inicioSemana);
+      finSemana.setDate(inicioSemana.getDate() + 6);
+      finSemana.setHours(23, 59, 59, 999);
+      return tareas.filter((t) => {
+        if (!t.fecha || t.fecha === "Sin fecha") return false;
+        const fecha = new Date(t.fecha);
+        return fecha >= inicioSemana && fecha <= finSemana;
+      });
+    },
+    mes: (tareas) => {
+      const ahora = new Date();
+      const anio = ahora.getFullYear();
+      const mes = String(ahora.getMonth() + 1).padStart(2, "0");
+      const prefijo = `${anio}-${mes}`;
+      return tareas.filter((t) => t.fecha && t.fecha.startsWith(prefijo));
+    },
+    pendientes: (tareas) => tareas.filter((t) => !t.hecha),
     "completadas-vista": (tareas) => tareas.filter((t) => t.hecha),
   },
 
@@ -83,7 +106,9 @@ const Filtros = {
   obtenerFiltrosBase() {
     return [
       { etiqueta: "Todas", valor: "todas" },
-      { etiqueta: "Alta prioridad", valor: "alta" },
+      { etiqueta: "Alta", valor: "alta" },
+      { etiqueta: "Media", valor: "media" },
+      { etiqueta: "Baja", valor: "baja" },
     ];
   },
 };

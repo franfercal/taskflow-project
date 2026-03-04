@@ -6,20 +6,11 @@ const Estadisticas = {
     const total = State.tareas.length;
     const completadas = State.tareas.filter((t) => t.hecha).length;
     const pendientes = total - completadas;
-    const porcentaje = total ? Math.round((completadas / total) * 100) : 0;
-
     // actualizar valor principales
-    this.actualizarElemento("est-total", total);
     this.actualizarElemento("est-completadas", completadas);
-    this.actualizarElemento("est-porcentaje", `${porcentaje}%`);
+    this.actualizarElemento("est-pendientes", pendientes);
 
-    // actualiza barra progreso
-    const fillElement = Utils.getElement("est-fill");
-    if (fillElement) {
-      fillElement.style.width = `${porcentaje}%`;
-    }
-
-    // actualiza contadores 
+    // actualiza contadores
     this.actualizarContadores(completadas, pendientes);
 
     // act. sub.
@@ -33,13 +24,20 @@ const Estadisticas = {
 
   /*actualiza contadorbarra lateral */
   actualizarContadores(completadas, pendientes) {
+    const hoyStr = new Date().toISOString().split("T")[0];
     const hoy = State.tareas.filter(
-      (t) => !t.hecha && t.fecha.toLowerCase().includes("hoy")
+      (t) => !t.hecha && t.fecha && t.fecha.startsWith(hoyStr)
     ).length;
+
+    const ahora = new Date();
+    const prefMes = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, "0")}`;
+    const mes = State.tareas.filter((t) => t.fecha && t.fecha.startsWith(prefMes)).length;
 
     this.actualizarElemento("cnt-todas", State.tareas.length);
     this.actualizarElemento("cnt-hoy", hoy);
     this.actualizarElemento("cnt-semana", pendientes);
+    this.actualizarElemento("cnt-mes", mes);
+    this.actualizarElemento("cnt-pendientes", pendientes);
     this.actualizarElemento("cnt-completadas", completadas);
   },
 
@@ -58,18 +56,4 @@ const Estadisticas = {
     this.actualizarElemento("subtitle-pendientes", texto);
   },
 
-  /* resumen estadisticas */
-  obtenerResumen() {
-    const total = State.tareas.length;
-    const completadas = State.tareas.filter((t) => t.hecha).length;
-    const pendientes = total - completadas;
-    const porcentaje = total ? Math.round((completadas / total) * 100) : 0;
-
-    return {
-      total,
-      completadas,
-      pendientes,
-      porcentaje,
-    };
-  },
 };

@@ -19,6 +19,15 @@ const Render = {
       });
     }
 
+    // tarjetas estadísticas clickables
+    const statsGrid = document.querySelector(".estadisticas-grid");
+    if (statsGrid) {
+      statsGrid.addEventListener("click", (e) => {
+        const card = e.target.closest("[data-filtro]");
+        if (card) Filtros.cambiarFiltro(card.dataset.filtro);
+      });
+    }
+
     // proyectos laterales
     const navProyectos = Utils.getElement("nav-proyectos");
     if (navProyectos) {
@@ -43,16 +52,10 @@ const Render = {
     if (!contenedor) return;
 
     const filtrosBase = Filtros.obtenerFiltrosBase();
-    const filtrosProyectos = State.proyectos.map((p) => ({
-      etiqueta: p,
-      valor: p,
-    }));
-
-    const todosFiltros = [...filtrosBase, ...filtrosProyectos];
 
     Utils.setHTML(
       contenedor,
-      todosFiltros
+      filtrosBase
         .map(
           (f) => `
         <button 
@@ -93,7 +96,7 @@ const Render = {
           return `
           <div class="nav-item" data-vista="${(proyecto)}">
             <span class="nav-icon">◆</span>
-            ${(proyecto)}
+            <span class="nav-label">${(proyecto)}</span>
             <span class="nav-counter">${pendientes}</span>
             <button class="btn-eliminar-proyecto" data-proyecto="${(proyecto)}" aria-label="Eliminar proyecto">✕</button>
           </div>`;
@@ -143,11 +146,10 @@ const Render = {
     if (!fechaStr || fechaStr === "Sin fecha") return fechaStr;
     const [datePart, timePart] = fechaStr.split(" ");
     const date = new Date(datePart + "T00:00:00");
-    const display = date.toLocaleDateString("es-ES", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-    });
+    const weekday = date.toLocaleDateString("es-ES", { weekday: "long" });
+    const day = date.getDate();
+    const month = date.toLocaleDateString("es-ES", { month: "long" });
+    const display = `${weekday} ${day} de ${month}`;
     return timePart ? `${display} · ${timePart}` : display;
   },
 
@@ -155,7 +157,7 @@ const Render = {
   renderizarTarjeta(tarea) {
     return `
       <div 
-        class="task-card ${tarea.hecha ? "completada" : ""}" 
+        class="task-card ${tarea.hecha ? "completada" : `prioridad-${tarea.prioridad}`}"
         data-id="${tarea.id}"
       >
         <div class="checkbox">${tarea.hecha ? "✓" : ""}</div>

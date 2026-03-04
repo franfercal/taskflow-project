@@ -40,11 +40,6 @@ const Utils = {
     }
   },
 
-  /** obtiene valor  atributo data */
-  getData(element, key) {
-    return element?.dataset?.[key];
-  },
-
   /** inserta texto de elemento */
   setText(element, text) {
     if (element) element.textContent = text;
@@ -61,17 +56,6 @@ const Utils = {
     if (className) element.className = className;
     if (textContent) element.textContent = textContent;
     return element;
-  },
-
-  /** Delega eventos a padre */
-  delegate(parentSelector, eventType, childSelector, callback) {
-    const parent = document.querySelector(parentSelector);
-    if (!parent) return;
-
-    parent.addEventListener(eventType, (e) => {
-      const target = e.target.closest(childSelector);
-      if (target) callback.call(target, e);
-    });
   },
 
   /** cadema vacia p con espacios */

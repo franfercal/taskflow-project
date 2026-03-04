@@ -39,11 +39,4 @@ const Navegacion = {
     }
   },
 
-  /* cierra el menu movil */
-  cerrarMenuMovil() {
-    const sidebar = Utils.getElement("sidebar");
-    if (sidebar) {
-      Utils.removeClass(sidebar, "open");
-    }
-  },
 };

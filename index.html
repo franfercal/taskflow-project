@@ -31,19 +31,27 @@
           <h3>Vistas</h3>
           <nav>
             <div class="nav-item active" data-vista="todas">
-              <span class="nav-icon">◈</span> Todas
+              <span class="nav-icon">◈</span><span class="nav-label">Todas</span>
               <span class="nav-counter" id="cnt-todas">0</span>
             </div>
             <div class="nav-item" data-vista="hoy">
-              <span class="nav-icon">◎</span> Hoy
+              <span class="nav-icon">◎</span><span class="nav-label">Hoy</span>
               <span class="nav-counter" id="cnt-hoy">0</span>
             </div>
             <div class="nav-item" data-vista="semana">
-              <span class="nav-icon">◷</span> Esta semana
+              <span class="nav-icon">◷</span><span class="nav-label">Esta semana</span>
               <span class="nav-counter" id="cnt-semana">0</span>
             </div>
+            <div class="nav-item" data-vista="mes">
+              <span class="nav-icon">◑</span><span class="nav-label">Este mes</span>
+              <span class="nav-counter" id="cnt-mes">0</span>
+            </div>
+            <div class="nav-item" data-vista="pendientes">
+              <span class="nav-icon">◻</span><span class="nav-label">Sin completar</span>
+              <span class="nav-counter" id="cnt-pendientes">0</span>
+            </div>
             <div class="nav-item" data-vista="completadas-vista">
-              <span class="nav-icon">✓</span> Completadas
+              <span class="nav-icon">✓</span><span class="nav-label">Completadas</span>
               <span class="nav-counter" id="cnt-completadas">0</span>
             </div>
           </nav>
@@ -57,22 +65,13 @@
         <div class="sidebar-section">
           <h3>Progreso</h3>
           <div class="estadisticas-grid">
-            <div class="estadistica-card">
-              <div class="estadistica-valor" id="est-total">0</div>
-              <div class="estadistica-nombre">Total</div>
-            </div>
-            <div class="estadistica-card">
+            <div class="estadistica-card estadistica-card--clickable" data-filtro="completadas-vista">
               <div class="estadistica-valor" id="est-completadas">0</div>
-              <div class="estadistica-nombre">Listas</div>
+              <div class="estadistica-nombre">Terminadas</div>
             </div>
-          </div>
-          <div class="progress-block" style="margin-top: var(--espacio-4)">
-            <div class="progress-label">
-              <span>Progreso semanal</span>
-              <span id="est-porcentaje">0%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" id="est-fill" style="width: 0%"></div>
+            <div class="estadistica-card estadistica-card--clickable" data-filtro="pendientes">
+              <div class="estadistica-valor" id="est-pendientes">0</div>
+              <div class="estadistica-nombre">Sin Terminar</div>
             </div>
           </div>
         </div>
