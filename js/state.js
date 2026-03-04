@@ -4,6 +4,7 @@ const State = {
   proyectos: ["Desarrollo Web", "FrontEnd", "BackEnd", "JS", "Python"],
   tareas: [],
   filtroActivo: "todas",
+  busqueda: "",
   siguienteId: 1,
 
   /** obtiene todas las tareas */
@@ -35,6 +36,7 @@ const State = {
   reset() {
     this.tareas = [];
     this.filtroActivo = "todas";
+    this.busqueda = "";
     this.siguienteId = 1;
   },
 };

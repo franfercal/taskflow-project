@@ -10,7 +10,8 @@ const Modal = {
       titulo: Utils.getElement("field-titulo"),
       proyecto: Utils.getElement("field-proyecto"),
       prioridad: Utils.getElement("field-prioridad"),
-      fecha: Utils.getElement("field-fecha"),
+      fechaDia: Utils.getElement("field-fecha-dia"),
+      fechaHora: Utils.getElement("field-fecha-hora"),
       nuevoProyectoContainer: Utils.getElement("field-nuevo-proyecto"),
       nombreProyecto: Utils.getElement("field-nombre-proyecto"),
     };
@@ -35,7 +36,8 @@ const Modal = {
   /*limpia los campos formulario */
   limpiarCampos() {
     this.elementos.titulo.value = "";
-    this.elementos.fecha.value = "";
+    this.elementos.fechaDia.value = "";
+    this.elementos.fechaHora.value = "";
     this.elementos.nombreProyecto.value = "";
     this.elementos.nuevoProyectoContainer.style.display = "none";
     this.elementos.titulo.style.borderColor = "";
@@ -64,7 +66,9 @@ const Modal = {
     const titulo = this.elementos.titulo.value.trim();
     const proyecto = this.elementos.proyecto.value;
     const prioridad = this.elementos.prioridad.value;
-    const fecha = this.elementos.fecha.value.trim();
+    const dia = this.elementos.fechaDia.value;
+    const hora = this.elementos.fechaHora.value;
+    const fecha = dia ? (hora ? `${dia} ${hora}` : dia) : "Sin fecha";
 
     // valida titulo - valida si el nuevo proyecto esta vacio
     if (!titulo) {

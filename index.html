@@ -87,10 +87,21 @@
           <button class="btn-nueva-tarea">+ Nueva tarea</button>
         </div>
 
-        <!-- Filtros dinámicos -->
+        <!-- busqueda -->
+        <div class="buscador">
+          <span class="buscador-icono">⌕</span>
+          <input
+            type="search"
+            id="input-busqueda"
+            placeholder="Buscar tarea..."
+            autocomplete="off"
+          />
+        </div>
+
+        <!-- filtros -->
         <div class="filters" id="filters"></div>
 
-        <!-- Contenedor dinámico de tareas -->
+        <!-- contenedor de tareas -->
         <div id="task-list"></div>
       </main>
     </div>
@@ -128,7 +139,7 @@
             </div>
           </div>
 
-          <!-- crear nuevo proyecto -->
+          <!-- crear proyecto -->
           <div class="field" id="field-nuevo-proyecto" style="display: none">
             <label>Nombre del nuevo proyecto</label>
             <div style="display: flex; gap: var(--espacio-2)">
@@ -154,7 +165,10 @@
 
           <div class="field">
             <label>Fecha / hora límite</label>
-            <input type="text" id="field-fecha" placeholder="Ej: Hoy, 17:00" />
+            <div class="fields-fecha">
+              <input type="date" id="field-fecha-dia" />
+              <input type="time" id="field-fecha-hora" />
+            </div>
           </div>
         </div>
 

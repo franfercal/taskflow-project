@@ -5,8 +5,10 @@ const Filtros = {
   definiciones: {
     todas: (tareas) => tareas,
     alta: (tareas) => tareas.filter((t) => t.prioridad === "alta"),
-    hoy: (tareas) =>
-      tareas.filter((t) => !t.hecha && t.fecha.toLowerCase().includes("hoy")),
+    hoy: (tareas) => {
+      const hoy = new Date().toISOString().split("T")[0];
+      return tareas.filter((t) => !t.hecha && t.fecha.startsWith(hoy));
+    },
     semana: (tareas) => tareas.filter((t) => !t.hecha),
     "completadas-vista": (tareas) => tareas.filter((t) => t.hecha),
   },
@@ -16,13 +18,36 @@ const Filtros = {
     const { tareas } = State;
     const filtro = State.filtroActivo;
 
-    // si es un filtro definido, usa la definicion
+    let resultado;
     if (this.definiciones[filtro]) {
-      return this.definiciones[filtro](tareas);
+      resultado = this.definiciones[filtro](tareas);
+    } else {
+      resultado = tareas.filter((t) => t.proyecto === filtro);
     }
 
-    // si no asume que es un proyecto
-    return tareas.filter((t) => t.proyecto === filtro);
+    // aplica búsqueda de texto sobre el resultado
+    if (State.busqueda) {
+      const texto = State.busqueda.toLowerCase();
+      resultado = resultado.filter((t) =>
+        t.titulo.toLowerCase().includes(texto)
+      );
+    }
+
+    return resultado;
+  },
+
+  /* inicializa el listener del input de búsqueda */
+  init() {
+    const input = Utils.getElement("input-busqueda");
+    if (!input) return;
+
+    input.addEventListener(
+      "input",
+      Utils.debounce(() => {
+        State.busqueda = input.value.trim();
+        Render.renderizarTareas();
+      }, 200)
+    );
   },
 
   /* cambia filtro activo y actualiza */
@@ -32,7 +57,7 @@ const Filtros = {
     Render.renderizarTareas();
   },
 
-  /* Actualiza visualmente los botones de filtro */
+  /* atualiza botones filtro */
   actualizarUIFiltros() {    
     // actualizar chips filtro
     Utils.getElements(".filter-chip").forEach((chip) => {

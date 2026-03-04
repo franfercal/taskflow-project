@@ -16,6 +16,7 @@ const App = {
       Modal.init();
       Navegacion.init();
       Render.init();
+      Filtros.init();
 
       // 4. render UI inicial
       Render.renderizarFiltros();

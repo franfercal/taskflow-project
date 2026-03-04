@@ -1,22 +1,40 @@
 /*Hace y actualiza la interfaz de usuario */
 
 const Render = {
-  /* inicializa listeners de tareas una sola vez */
+  /* inicializa listeners una sola vez */
   init() {
+    // tareas
     const contenedor = Utils.getElement("task-list");
-    if (!contenedor) return;
+    if (contenedor) {
+      contenedor.addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-eliminar")) {
+          e.stopPropagation();
+          TareasController.eliminar(Number(e.target.dataset.id));
+          return;
+        }
+        const tarjeta = e.target.closest(".task-card");
+        if (tarjeta) {
+          TareasController.alternarHecha(Number(tarjeta.dataset.id));
+        }
+      });
+    }
 
-    contenedor.addEventListener("click", (e) => {
-      if (e.target.classList.contains("btn-eliminar")) {
-        e.stopPropagation();
-        TareasController.eliminar(Number(e.target.dataset.id));
-        return;
-      }
-      const tarjeta = e.target.closest(".task-card");
-      if (tarjeta) {
-        TareasController.alternarHecha(Number(tarjeta.dataset.id));
-      }
-    });
+    // proyectos laterales
+    const navProyectos = Utils.getElement("nav-proyectos");
+    if (navProyectos) {
+      navProyectos.addEventListener("click", (e) => {
+        const btnEliminar = e.target.closest(".btn-eliminar-proyecto");
+        if (btnEliminar) {
+          e.stopPropagation();
+          ProyectosController.eliminar(btnEliminar.dataset.proyecto);
+          return;
+        }
+        const item = e.target.closest(".nav-item");
+        if (item) {
+          Filtros.cambiarFiltro(item.dataset.vista);
+        }
+      });
+    }
   },
 
   /* renderiza filtros  */
@@ -77,21 +95,12 @@ const Render = {
             <span class="nav-icon">◆</span>
             ${(proyecto)}
             <span class="nav-counter">${pendientes}</span>
+            <button class="btn-eliminar-proyecto" data-proyecto="${(proyecto)}" aria-label="Eliminar proyecto">✕</button>
           </div>`;
         })
         .join("")
     );
 
-    this.delegarEventosProyectos();
-  },
-
-  /* delega eventos proyecto */
-  delegarEventosProyectos() {
-    Utils.getElements("#nav-proyectos .nav-item").forEach((item) => {
-      item.addEventListener("click", () => {
-        Filtros.cambiarFiltro(item.dataset.vista);
-      });
-    });
   },
 
   /* renderiza tareas visible  */
@@ -129,6 +138,19 @@ const Render = {
       </section>`;
   },
 
+  /* formatea fecha ISO para mostrar */
+  formatearFecha(fechaStr) {
+    if (!fechaStr || fechaStr === "Sin fecha") return fechaStr;
+    const [datePart, timePart] = fechaStr.split(" ");
+    const date = new Date(datePart + "T00:00:00");
+    const display = date.toLocaleDateString("es-ES", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    });
+    return timePart ? `${display} · ${timePart}` : display;
+  },
+
   /* renderiza tarjet de tarea */
   renderizarTarjeta(tarea) {
     return `
@@ -140,7 +162,7 @@ const Render = {
         <div class="task-info">
           <div class="task-title">${(tarea.titulo)}</div>
           <span class="task-proyecto">${(tarea.proyecto)}</span>
-          <span class="task-fecha">${(tarea.fecha)}</span>
+          <span class="task-fecha">${this.formatearFecha(tarea.fecha)}</span>
         </div>
         <span class="badge badge-${tarea.prioridad}">
           ${tarea.prioridad}
