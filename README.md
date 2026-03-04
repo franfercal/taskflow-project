@@ -4,36 +4,23 @@ Una aplicación web de **gestión de tareas y proyectos**
 
 ## Características Principales
 
-- **Crear, completar y eliminar tareas** - Gestión completa del ciclo de vida de las tareas
-- **Múltiples proyectos** - Organiza tus tareas por proyectos personalizados
-- **Prioridades** - Asigna niveles de prioridad (Alta, Media, Baja)
-- **Fechas** - Añade fechas a tus tareas para mejor planificación
+- **Crear, completar y eliminar tareas** - Gestión total sobre todas las tareas
+- **Múltiples proyectos** - Organiza tus tareas por proyectos
+- **Prioridades** - Distintos niveles de prioridad (Alta, Media, Baja)
+- **Fechas** - Añade fechas a tus tareas y hora de entrega
 - **Filtros** - Filtra tareas por:
-  - Todas las tareas, Tareas de alta prioridad,Tareas para hoy, Tareas de esta semana, Tareas completadas, Tareas por proyecto específico.
-- **Persistencia de datos** - Elige entre:
-  - **LocalStorage** (app.js) - Para navegadores estándar (No recomendado)
-  - **IndexedDB** (app-indexdb.js) - Para mayor capacidad de almacenamiento
+  - Todas las tareas, Tareas de alta prioridad,Tareas para hoy, Tareas de esta semana, Tareas completadas, Tareas por proyecto
+- **Persistencia de datos**
+  - **LocalStorage** - Compatible con la mayoría de navegadores
 
-##  Estructura de Datos
+# TaskFlow V1
 
-### Tarea
-```javascript
-{
-  id: 1,
-  titulo: "Diseñar interfaz",
-  proyecto: "Diseño",
-  prioridad: "alta",      // "alta" | "media" | "baja"
-  fecha: "Hoy",
-  hecha: false
-}
-```
+## Nuevas Características:
+- **Ahora podemos eliminar también proyectos, no solo tareas** - Ahora podemos gestionar totalmente los proyectos también
+- **Cambios en la creación de tareas** - Añadido calendario y reloj para poder seleccionar la hora y la fecha de entrega final (ahora no hace falta           escribirlo)
+- **Optimización en la fluidez** - En esta versión se han corregido problemas relacionados con la fluidez al eliminar o crear múltiples proyectos rápidamente.
+- **Optimización de LocalStorage** - Ahora el alamacenamiento de datos con locastorage funciona, con eso se ha procedido a la eliminacion de la base de datos indexdb.
 
-### Proyecto
-```javascript
-"Diseño"
-"Front End"
-"Base de Datos"
-```
 
 ## Documentación y Referencias:
 
