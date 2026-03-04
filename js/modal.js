@@ -2,6 +2,8 @@
 
 const Modal = {
   elementos: {},
+  fpFecha: null,
+  fpHora: null,
 
   /* inicializa modal y event listeners */
   init() {
@@ -15,6 +17,19 @@ const Modal = {
       nuevoProyectoContainer: Utils.getElement("field-nuevo-proyecto"),
       nombreProyecto: Utils.getElement("field-nombre-proyecto"),
     };
+
+    this.fpFecha = flatpickr(this.elementos.fechaDia, {
+      dateFormat: "Y-m-d",
+      allowInput: true,
+    });
+
+    this.fpHora = flatpickr(this.elementos.fechaHora, {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: true,
+      allowInput: true,
+    });
 
     this.agregarEventListeners();
   },
@@ -36,8 +51,8 @@ const Modal = {
   /*limpia los campos formulario */
   limpiarCampos() {
     this.elementos.titulo.value = "";
-    this.elementos.fechaDia.value = "";
-    this.elementos.fechaHora.value = "";
+    this.fpFecha.clear();
+    this.fpHora.clear();
     this.elementos.nombreProyecto.value = "";
     this.elementos.nuevoProyectoContainer.style.display = "none";
     this.elementos.titulo.style.borderColor = "";
