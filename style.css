@@ -697,7 +697,7 @@ section.tasks-section {
   transform: translateY(-1px);
 }
 
-/*  Media Queries  */
+/*  media Queries  */
 @media (max-width: 900px) {
   .wrapper {
     padding: var(--espacio-5);

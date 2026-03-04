@@ -1,4 +1,4 @@
-/* Gestion modal para creacion-edicion de tareas */
+/* gestion modal para creacion-edicion de tareas */
 
 const Modal = {
   elementos: {},

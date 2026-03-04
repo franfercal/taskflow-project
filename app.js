@@ -6,7 +6,7 @@ const App = {
     console.log("Iniciando TaskFlow");
 
     try {
-      // 1. Cargar datos
+      // 1. datos
       Persistencia.cargar();
 
       // 2. header
@@ -18,13 +18,13 @@ const App = {
       Render.init();
       Filtros.init();
 
-      // 4. render UI inicial
+      // 4. render UI 
       Render.renderizarFiltros();
       Render.renderizarProyectosLateral();
       Render.renderizarTareas();
       Estadisticas.actualizar();
 
-      console.log("TaskFlow iniciado correctamente");
+      console.log("TaskFlow iniciado");
       console.log(`Tareas: ${State.tareas.length} | Proyectos: ${State.proyectos.length}`);
     } catch (error) {
       console.error("Error al inicializar", error);
@@ -57,7 +57,7 @@ const App = {
   },
 };
 
-// iniciar app cuando el DOM este
+// iniciar app cuando el DOM este cargado
 document.addEventListener("DOMContentLoaded", () => {
   App.init();
 });
