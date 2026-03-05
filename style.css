@@ -30,7 +30,15 @@
   --radio-sm: 4px;
   --radio-md: 8px;
   --radio-lg: 14px;
+  --radio-pill: 99px;
   --sombra-tarjeta: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --sombra-flotante: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --sombra-modal: 0 20px 60px rgba(0, 0, 0, 0.15);
+  --transicion: 0.2s ease;
+  --rgb-acento: 37, 99, 235;
+  --rgb-peligro: 239, 68, 68;
+  --rgb-naranja: 249, 115, 22;
+  --rgb-info: 59, 130, 246;
 }
 
 /* reset - base */
@@ -100,7 +108,7 @@ body {
 .btn-guardar,
 .estadistica-card--clickable,
 .btn-menu span {
-  transition: all 0.2s ease;
+  transition: all var(--transicion);
 }
 
 /* header */
@@ -222,7 +230,7 @@ main {
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
   padding: 2px 7px;
-  border-radius: 99px;
+  border-radius: var(--radio-pill);
 }
 
 /* estadisticas */
@@ -318,7 +326,7 @@ main {
   border-color: var(--color-acento);
 }
 #input-busqueda:focus {
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--rgb-acento), 0.1);
 }
 #input-busqueda::-webkit-search-cancel-button {
   -webkit-appearance: none;
@@ -335,7 +343,7 @@ main {
 .filter-chip {
   font-size: var(--texto-xs);
   padding: var(--espacio-2) var(--espacio-4);
-  border-radius: 99px;
+  border-radius: var(--radio-pill);
   border: 1px solid var(--color-borde);
   background: transparent;
   color: var(--color-texto-suave);
@@ -353,19 +361,19 @@ main {
 .filter-chip[data-filtro="alta"]:hover,
 .filter-chip[data-filtro="alta"].active {
   border-color: var(--color-peligro);
-  background: rgba(255, 89, 89, 0.12);
+  background: rgba(var(--rgb-peligro), 0.12);
   color: var(--color-peligro);
 }
 .filter-chip[data-filtro="media"]:hover,
 .filter-chip[data-filtro="media"].active {
   border-color: var(--color-naranja);
-  background: rgba(249, 115, 22, 0.12);
+  background: rgba(var(--rgb-naranja), 0.12);
   color: var(--color-naranja);
 }
 .filter-chip[data-filtro="baja"]:hover,
 .filter-chip[data-filtro="baja"].active {
   border-color: var(--color-info);
-  background: rgba(59, 130, 246, 0.12);
+  background: rgba(var(--rgb-info), 0.12);
   color: var(--color-info);
 }
 
@@ -495,23 +503,23 @@ main {
   font-size: var(--texto-xs);
   font-weight: 500;
   padding: 3px 10px;
-  border-radius: 99px;
+  border-radius: var(--radio-pill);
   letter-spacing: 0.5px;
 }
 .badge-alta {
-  background: rgba(255, 89, 89, 0.15);
+  background: rgba(var(--rgb-peligro), 0.15);
   color: var(--color-peligro);
-  border: 1px solid rgba(255, 89, 89, 0.3);
+  border: 1px solid rgba(var(--rgb-peligro), 0.3);
 }
 .badge-media {
-  background: rgba(249, 115, 22, 0.12);
+  background: rgba(var(--rgb-naranja), 0.12);
   color: var(--color-naranja);
-  border: 1px solid rgba(249, 115, 22, 0.3);
+  border: 1px solid rgba(var(--rgb-naranja), 0.3);
 }
 .badge-baja {
-  background: rgba(59, 130, 246, 0.12);
+  background: rgba(var(--rgb-info), 0.12);
   color: var(--color-info);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(var(--rgb-info), 0.3);
 }
 
 /* botones - acciones */
@@ -546,7 +554,7 @@ main {
 }
 .btn-eliminar:hover,
 .btn-eliminar-proyecto:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(var(--rgb-peligro), 0.1);
   color: var(--color-peligro);
 }
 .btn-close-modal {
@@ -614,7 +622,7 @@ main {
   border-radius: var(--radio-lg);
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--sombra-modal);
   animation: subirAparecer 0.25s ease both;
 }
 .modal-header {
@@ -681,7 +689,7 @@ main {
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--sombra-flotante);
   padding: var(--espacio-3);
 }
 .flatpickr-calendar.hasTime.noCalendar {
@@ -705,7 +713,7 @@ main {
 }
 .flatpickr-time input:hover,
 .flatpickr-time input:focus {
-  background: rgba(37, 99, 235, 0.07);
+  background: rgba(var(--rgb-acento), 0.07);
   border-color: var(--color-acento);
 }
 .flatpickr-time .flatpickr-time-separator {
@@ -722,7 +730,7 @@ main {
 }
 .flatpickr-time .arrowUp:hover,
 .flatpickr-time .arrowDown:hover {
-  background: rgba(37, 99, 235, 0.1);
+  background: rgba(var(--rgb-acento), 0.1);
   color: var(--color-acento);
 }
 .flatpickr-months {
