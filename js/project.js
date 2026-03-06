@@ -17,7 +17,7 @@ const ProyectosController = {
 
     State.proyectos.push(nombreLimpio);
     this.actualizarUI();
-    Persistencia.autoguardar();
+    Persistencia.guardar();
     return true;
   },
 
@@ -29,7 +29,7 @@ const ProyectosController = {
       //elimina tareas de proyecto
       State.tareas = State.tareas.filter((t) => t.proyecto !== nombre);
       this.actualizarUI();
-      Persistencia.autoguardar();
+      Persistencia.guardar();
       return true;
     }
     return false;

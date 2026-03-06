@@ -28,6 +28,15 @@ const Render = {
       });
     }
 
+    // filter chips (delegación única, evita re-registro en cada render)
+    const contenedorFiltros = Utils.getElement("filters");
+    if (contenedorFiltros) {
+      contenedorFiltros.addEventListener("click", (e) => {
+        const chip = e.target.closest(".filter-chip");
+        if (chip) Filtros.cambiarFiltro(chip.dataset.filtro);
+      });
+    }
+
     // proyectos laterales
     const navProyectos = Utils.getElement("nav-proyectos");
     if (navProyectos) {
@@ -58,26 +67,15 @@ const Render = {
       filtrosBase
         .map(
           (f) => `
-        <button 
-          class="filter-chip ${State.filtroActivo === f.valor ? "active" : ""}" 
+        <button
+          class="filter-chip ${State.filtroActivo === f.valor ? "active" : ""}"
           data-filtro="${f.valor}"
         >
-          ${(f.etiqueta)}
+          ${f.etiqueta}
         </button>`
         )
         .join("")
     );
-
-    this.delegarEventosFiltros();
-  },
-
-  /*delega eventos filtros */
-  delegarEventosFiltros() {
-    Utils.getElements(".filter-chip").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        Filtros.cambiarFiltro(btn.dataset.filtro);
-      });
-    });
   },
 
   /*renderiza los proyect lateral */
@@ -94,11 +92,11 @@ const Render = {
           );
 
           return `
-          <div class="nav-item" data-vista="${(proyecto)}">
+          <div class="nav-item" data-vista="${Utils.escapeHtml(proyecto)}">
             <span class="nav-icon">◆</span>
-            <span class="nav-label">${(proyecto)}</span>
+            <span class="nav-label">${Utils.escapeHtml(proyecto)}</span>
             <span class="nav-counter">${pendientes}</span>
-            <button class="btn-eliminar-proyecto" data-proyecto="${(proyecto)}" aria-label="Eliminar proyecto">✕</button>
+            <button class="btn-eliminar-proyecto" data-proyecto="${Utils.escapeHtml(proyecto)}" aria-label="Eliminar proyecto">✕</button>
           </div>`;
         })
         .join("")
@@ -106,27 +104,19 @@ const Render = {
 
   },
 
-  /* renderiza tareas visible  */
+  /* renderiza tareas visibles */
   renderizarTareas() {
     const visibles = Filtros.obtenerVisibles();
-    const pendientes = visibles.filter((t) => !t.hecha);
-    const completadas = visibles.filter((t) => t.hecha);
-
     const contenedor = Utils.getElement("task-list");
     if (!contenedor) return;
 
-    if (!visibles.length) {
-      Utils.setHTML(contenedor, '<div class="empty-state">No hay tareas</div>');
-      Estadisticas.actualizar();
-      return;
-    }
-
     Utils.setHTML(
       contenedor,
-      this.renderizarGrupo("Pendientes", pendientes) +
-        this.renderizarGrupo("Completadas", completadas)
+      !visibles.length
+        ? '<div class="empty-state">No hay tareas</div>'
+        : this.renderizarGrupo("Pendientes", visibles.filter((t) => !t.hecha)) +
+          this.renderizarGrupo("Completadas", visibles.filter((t) => t.hecha))
     );
-
     Estadisticas.actualizar();
   },
 
@@ -162,8 +152,8 @@ const Render = {
       >
         <div class="checkbox">${tarea.hecha ? "✓" : ""}</div>
         <div class="task-info">
-          <div class="task-title">${(tarea.titulo)}</div>
-          <span class="task-proyecto">${(tarea.proyecto)}</span>
+          <div class="task-title">${Utils.escapeHtml(tarea.titulo)}</div>
+          <span class="task-proyecto">${Utils.escapeHtml(tarea.proyecto)}</span>
           <span class="task-fecha">${this.formatearFecha(tarea.fecha)}</span>
         </div>
         <span class="badge badge-${tarea.prioridad}">

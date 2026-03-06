@@ -32,12 +32,7 @@ const Utils = {
 
   /** toggle de clase */
   toggleClass(element, className, condition) {
-    if (!element) return;
-    if (condition !== undefined) {
-      element.classList.toggle(className, condition);
-    } else {
-      element.classList.toggle(className);
-    }
+    if (element) element.classList.toggle(className, condition);
   },
 
   /** inserta texto de elemento */
@@ -58,7 +53,14 @@ const Utils = {
     return element;
   },
 
-  /** cadema vacia p con espacios */
+  /** escapa caracteres HTML especiales */
+  escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
+    );
+  },
+
+  /** cadena vacia o con espacios */
   estaVacio(valor) {
     return !valor || !valor.trim();
   },

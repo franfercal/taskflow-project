@@ -19,7 +19,7 @@ const TareasController = {
 
     State.tareas.unshift(nuevaTarea);
     this.actualizarUI();
-    Persistencia.autoguardar();
+    Persistencia.guardar();
     return true;
   },
 
@@ -29,7 +29,7 @@ const TareasController = {
     if (tarea) {
       tarea.hecha = !tarea.hecha;
       this.actualizarUI();
-      Persistencia.autoguardar();
+      Persistencia.guardar();
     }
   },
 
@@ -37,7 +37,7 @@ const TareasController = {
   eliminar(id) {
     State.tareas = State.tareas.filter((t) => t.id !== id);
     this.actualizarUI();
-    Persistencia.autoguardar();
+    Persistencia.guardar();
   },
 
   /* edita tarea */
@@ -46,7 +46,7 @@ const TareasController = {
     if (tarea) {
       Object.assign(tarea, actualizaciones);
       this.actualizarUI();
-      Persistencia.autoguardar();
+      Persistencia.guardar();
       return true;
     }
     return false;

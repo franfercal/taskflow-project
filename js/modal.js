@@ -69,8 +69,8 @@ const Modal = {
       State.proyectos
         .map(
           (p) => `
-          <option value="${p}" ${p === valorActual ? "selected" : ""}>
-            ${(p)}
+          <option value="${Utils.escapeHtml(p)}" ${p === valorActual ? "selected" : ""}>
+            ${Utils.escapeHtml(p)}
           </option>`
         )
         .join("") + `<option value="__nuevo__">+ Nuevo proyecto…</option>`

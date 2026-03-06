@@ -1,62 +1,40 @@
 /* LocalStorage para persistencia */
 
 const Persistencia = {
-  // Claves de almacenamiento
   KEYS: {
     TAREAS: "taskflow_tareas",
     PROYECTOS: "taskflow_proyectos",
     SIGUIENTE_ID: "taskflow_siguiente_id",
   },
 
-  /* guarda estado actual  */
   guardar() {
     try {
       localStorage.setItem(this.KEYS.TAREAS, JSON.stringify(State.tareas));
-      localStorage.setItem(
-        this.KEYS.PROYECTOS,
-        JSON.stringify(State.proyectos)
-      );
-      localStorage.setItem(
-        this.KEYS.SIGUIENTE_ID,
-        State.siguienteId.toString()
-      );
-      console.log("Datos guardados");
-    } catch (error) {
-      console.error("Error al guardar", error);
+      localStorage.setItem(this.KEYS.PROYECTOS, JSON.stringify(State.proyectos));
+      localStorage.setItem(this.KEYS.SIGUIENTE_ID, String(State.siguienteId));
+    } catch (e) {
+      console.error("Error al guardar", e);
     }
   },
 
-  /* carga estados guardados */
   cargar() {
     try {
       const tareas = localStorage.getItem(this.KEYS.TAREAS);
       const proyectos = localStorage.getItem(this.KEYS.PROYECTOS);
-      const siguienteId = localStorage.getItem(this.KEYS.SIGUIENTE_ID);
-
+      const id = localStorage.getItem(this.KEYS.SIGUIENTE_ID);
       if (tareas) State.tareas = JSON.parse(tareas);
       if (proyectos) State.proyectos = JSON.parse(proyectos);
-      if (siguienteId) State.siguienteId = parseInt(siguienteId, 10);
-
-      console.log("Datos cargados desde localStorage");
-    } catch (error) {
-      console.error("Error al cargar", error);
+      if (id) State.siguienteId = parseInt(id, 10);
+    } catch (e) {
+      console.error("Error al cargar", e);
     }
   },
 
-  /* limpia todo  */
   limpiar() {
     try {
-      localStorage.removeItem(this.KEYS.TAREAS);
-      localStorage.removeItem(this.KEYS.PROYECTOS);
-      localStorage.removeItem(this.KEYS.SIGUIENTE_ID);
-      console.log("Memoria limpia");
-    } catch (error) {
-      console.error("Error al limpiar la memoria", error);
+      Object.values(this.KEYS).forEach((k) => localStorage.removeItem(k));
+    } catch (e) {
+      console.error("Error al limpiar", e);
     }
-  },
-
-  /* guarda en cada cambio */
-  autoguardar() {
-    this.guardar();
   },
 };

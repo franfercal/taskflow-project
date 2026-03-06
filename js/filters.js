@@ -14,7 +14,7 @@ const Filtros = {
     semana: (tareas) => {
       const ahora = new Date();
       const inicioSemana = new Date(ahora);
-      inicioSemana.setDate(ahora.getDate() - ahora.getDay() + 1);
+      inicioSemana.setDate(ahora.getDate() - ((ahora.getDay() + 6) % 7));
       inicioSemana.setHours(0, 0, 0, 0);
       const finSemana = new Date(inicioSemana);
       finSemana.setDate(inicioSemana.getDate() + 6);
@@ -80,7 +80,7 @@ const Filtros = {
     Render.renderizarTareas();
   },
 
-  /* atualiza botones filtro */
+  /* atualiza bot filtro */
   actualizarUIFiltros() {    
     // actualizar chips filtro
     Utils.getElements(".filter-chip").forEach((chip) => {
