@@ -22,7 +22,7 @@ const Estadisticas = {
     Utils.setText(Utils.getElement(id), valor);
   },
 
-  /* actualiza contadores barra lateral */
+  /* actualiza contadores lateral */
   actualizarContadores(completadas, pendientes) {
     const ahora = new Date();
     const hoyStr = ahora.toISOString().split("T")[0];

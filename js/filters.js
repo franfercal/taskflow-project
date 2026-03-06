@@ -80,8 +80,8 @@ const Filtros = {
     Render.renderizarTareas();
   },
 
-  /* atualiza bot filtro */
-  actualizarUIFiltros() {    
+  /* actualiza botones de filtro */
+  actualizarUIFiltros() {
     // actualizar chips filtro
     Utils.getElements(".filter-chip").forEach((chip) => {
       const esActivo = chip.dataset.filtro === State.filtroActivo;
@@ -93,13 +93,6 @@ const Filtros = {
       const esActivo = item.dataset.vista === State.filtroActivo;
       Utils.toggleClass(item, "active", esActivo);
     });
-  },
-
-  /* comprobar filtro existe */
-  existeFiltro(filtro) {
-    return (
-      this.definiciones[filtro] || State.existeProyecto(filtro)
-    );
   },
 
   /* filtros bases disponibles */

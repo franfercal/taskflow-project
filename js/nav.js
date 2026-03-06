@@ -7,7 +7,7 @@ const Navegacion = {
     this.configurarMenuMovil();
   },
 
-  /* configura event listeners vistas */
+  /* configura listeners vistas */
   configurarVistas() {
     Utils.getElements(".nav-item[data-vista]").forEach((item) => {
       item.addEventListener("click", () => {

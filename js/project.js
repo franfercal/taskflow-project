@@ -35,11 +35,6 @@ const ProyectosController = {
     return false;
   },
 
-  /* obtiene todos los proyectos */
-  obtenerTodos() {
-    return [...State.proyectos];
-  },
-
   /* obtiene tareas pend de proeycto */
   obtenerPendientesPorProyecto(proyecto) {
     return State.tareas.filter(

@@ -40,18 +40,6 @@ const TareasController = {
     Persistencia.guardar();
   },
 
-  /* edita tarea */
-  editar(id, actualizaciones) {
-    const tarea = State.tareas.find((t) => t.id === id);
-    if (tarea) {
-      Object.assign(tarea, actualizaciones);
-      this.actualizarUI();
-      Persistencia.guardar();
-      return true;
-    }
-    return false;
-  },
-
   /* actualiza todo rela con tareas */
   actualizarUI() {
     Render.renderizarTareas();

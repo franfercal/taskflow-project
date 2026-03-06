@@ -2,22 +2,19 @@ const Tema = {
   CLAVE: "taskflow-tema",
   ICONO_CLARO: "☀",
   ICONO_OSCURO: "☾",
+  btn: null,
 
   init() {
+    this.btn = document.getElementById("btn-tema");
     const guardado = localStorage.getItem(this.CLAVE);
-    const prefiereDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const esOscuro = guardado ? guardado === "dark" : prefiereDark;
-
+    const esOscuro = guardado ? guardado === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
     this.aplicar(esOscuro);
-
-    const btn = document.getElementById("btn-tema");
-    if (btn) btn.addEventListener("click", () => this.toggle());
+    if (this.btn) this.btn.addEventListener("click", () => this.toggle());
   },
 
   aplicar(oscuro) {
     document.documentElement.classList.toggle("dark", oscuro);
-    const btn = document.getElementById("btn-tema");
-    if (btn) btn.textContent = oscuro ? this.ICONO_OSCURO : this.ICONO_CLARO;
+    if (this.btn) this.btn.textContent = oscuro ? this.ICONO_OSCURO : this.ICONO_CLARO;
     localStorage.setItem(this.CLAVE, oscuro ? "dark" : "light");
   },
 

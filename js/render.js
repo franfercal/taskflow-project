@@ -1,7 +1,7 @@
 /*Hace y actualiza la interfaz de usuario */
 
 const Render = {
-  /* inicializa listeners una sola vez */
+  /* inicializa listeners */
   init() {
     // tareas
     const contenedor = Utils.getElement("task-list");
@@ -19,7 +19,7 @@ const Render = {
       });
     }
 
-    // tarjetas estadísticas clickables
+    // estadísticas click
     const statsGrid = document.querySelector(".estadisticas-grid");
     if (statsGrid) {
       statsGrid.addEventListener("click", (e) => {
@@ -28,7 +28,7 @@ const Render = {
       });
     }
 
-    // filter chips (delegación única, evita re-registro en cada render)
+    // filter chips
     const contenedorFiltros = Utils.getElement("filters");
     if (contenedorFiltros) {
       contenedorFiltros.addEventListener("click", (e) => {
@@ -101,7 +101,6 @@ const Render = {
         })
         .join("")
     );
-
   },
 
   /* renderiza tareas visibles */
@@ -131,22 +130,29 @@ const Render = {
       </section>`;
   },
 
-  /* formatea fecha ISO para mostrar */
+  /* formatea fecha*/
   formatearFecha(fechaStr) {
     if (!fechaStr || fechaStr === "Sin fecha") return fechaStr;
-    const [datePart, timePart] = fechaStr.split(" ");
+    const [datePart] = fechaStr.split(" ");
     const date = new Date(datePart + "T00:00:00");
     const weekday = date.toLocaleDateString("es-ES", { weekday: "long" });
     const day = date.getDate();
     const month = date.toLocaleDateString("es-ES", { month: "long" });
-    const display = `${weekday} ${day} de ${month}`;
-    return timePart ? `${display} · ${timePart}` : display;
+    return `${weekday} ${day} de ${month}`;
   },
 
-  /* renderiza tarjet de tarea */
+  /* extrae hora de fecha */
+  extraerHora(fechaStr) {
+    if (!fechaStr || fechaStr === "Sin fecha") return null;
+    const partes = fechaStr.split(" ");
+    return partes[1] || null;
+  },
+
+  /* tarjet de tarea */
   renderizarTarjeta(tarea) {
+    const hora = this.extraerHora(tarea.fecha);
     return `
-      <div 
+      <div
         class="task-card ${tarea.hecha ? "completada" : `prioridad-${tarea.prioridad}`}"
         data-id="${tarea.id}"
       >
@@ -155,13 +161,14 @@ const Render = {
           <div class="task-title">${Utils.escapeHtml(tarea.titulo)}</div>
           <span class="task-proyecto">${Utils.escapeHtml(tarea.proyecto)}</span>
           <span class="task-fecha">${this.formatearFecha(tarea.fecha)}</span>
+          ${hora ? `<span class="task-hora">◷ ${hora}</span>` : ""}
         </div>
         <span class="badge badge-${tarea.prioridad}">
           ${tarea.prioridad}
         </span>
-        <button 
-          class="btn-eliminar" 
-          data-id="${tarea.id}" 
+        <button
+          class="btn-eliminar"
+          data-id="${tarea.id}"
           aria-label="Eliminar tarea"
         >
           ✕

@@ -20,11 +20,6 @@ const Utils = {
     return new Date().toLocaleDateString("es-ES", opciones);
   },
 
-  /** añade clases */
-  addClass(element, className) {
-    if (element) element.classList.add(className);
-  },
-
   /** quita clases */
   removeClass(element, className) {
     if (element) element.classList.remove(className);
@@ -43,14 +38,6 @@ const Utils = {
   /** inserta el HTML de elemento */
   setHTML(element, html) {
     if (element) element.innerHTML = html;
-  },
-
-  /** crea elemento DOM */
-  createElement(tag, className = "", textContent = "") {
-    const element = document.createElement(tag);
-    if (className) element.className = className;
-    if (textContent) element.textContent = textContent;
-    return element;
   },
 
   /** escapa caracteres HTML especiales */

@@ -3,30 +3,23 @@
 const App = {
   /* Inicializa aplicacion */
   init() {
-    console.log("Iniciando TaskFlow");
-
     try {
-      // 1. datos
       Persistencia.cargar();
 
-      // 2. header
       this.configurarFecha();
       Tema.init();
 
-      // 3. componentes
       Modal.init();
       Navegacion.init();
       Render.init();
       Filtros.init();
 
-      // 4. render UI 
       Render.renderizarFiltros();
       Render.renderizarProyectosLateral();
       Render.renderizarTareas();
       Estadisticas.actualizar();
 
-      console.log("TaskFlow iniciado");
-      console.log(`Tareas: ${State.tareas.length} | Proyectos: ${State.proyectos.length}`);
+      this.mostrarBienvenida();
     } catch (error) {
       console.error("Error al inicializar", error);
     }
@@ -34,27 +27,36 @@ const App = {
 
   /* fecha header */
   configurarFecha() {
-    const fechaElement = Utils.getElement("fecha-actual");
-
-    if (fechaElement) {
-      const fecha = Utils.formatearFecha({
-        weekday: "short",
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-      Utils.setText(fechaElement, fecha);
-      console.log("Fecha ok");
-    } else {
-      console.warn("Error en elemento fecha-actual");
-    }
+    Utils.setText(
+      Utils.getElement("fecha-actual"),
+      Utils.formatearFecha({ weekday: "short", day: "numeric", month: "short", year: "numeric" })
+    );
   },
 
-  /* destruye app */
-  destroy() {
-    Persistencia.limpiar();
-    State.reset();
-    console.log("✓ TaskFlow destruido");
+  /* bienvenida */
+  mostrarBienvenida() {
+    const toast   = Utils.getElement("welcome-toast");
+    const msgEl   = Utils.getElement("welcome-toast-msg");
+    const iconEl  = Utils.getElement("welcome-toast-icon");
+    const closeEl = Utils.getElement("welcome-toast-close");
+
+    if (!toast || !msgEl) return;
+
+    const pendientes = State.tareas.filter((t) => !t.hecha).length;
+    const hayPendientes = pendientes > 0;
+
+    msgEl.textContent  = hayPendientes
+      ? `¡¡¡Tienes ${pendientes} tarea${pendientes === 1 ? "" : "s"} pendiente${pendientes === 1 ? "" : "s"}!!!`
+      : "¡¡No tienes tareas pendientes!!!";
+    iconEl.textContent = hayPendientes ? "⚠" : "✓";
+    iconEl.classList.toggle("con-pendientes", hayPendientes);
+    iconEl.classList.toggle("sin-pendientes", !hayPendientes);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add("visible")));
+
+    const ocultar = () => toast.classList.remove("visible");
+    const timer   = setTimeout(ocultar, 4500);
+    closeEl.addEventListener("click", () => { clearTimeout(timer); ocultar(); }, { once: true });
   },
 };
 

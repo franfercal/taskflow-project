@@ -5,7 +5,7 @@ const Modal = {
   fpFecha: null,
   fpHora: null,
 
-  /* inicializa modal y event listeners */
+  /* inicializa modal y listeners */
   init() {
     this.elementos = {
       backdrop: Utils.getElement("modal-backdrop"),
@@ -122,15 +122,13 @@ const Modal = {
     }
 
     if (ProyectosController.agregar(nombre)) {
-      this.sincronizarSelectProyecto();
       this.elementos.proyecto.value = nombre;
       this.elementos.nuevoProyectoContainer.style.display = "none";
       this.elementos.nombreProyecto.value = "";
-      console.log("✓ Proyecto creado");
     }
   },
 
-  /* añade event listeners al modal */
+  /* añade listeners al modal */
   agregarEventListeners() {
     // boton abrir modal
     Utils.getElements(".btn-nueva-tarea").forEach((btn) => {

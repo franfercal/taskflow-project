@@ -12,11 +12,4 @@ const State = {
     return this.proyectos.includes(nombre);
   },
 
-  /** reset del estado a inicio */
-  reset() {
-    this.tareas = [];
-    this.filtroActivo = "todas";
-    this.busqueda = "";
-    this.siguienteId = 1;
-  },
 };
