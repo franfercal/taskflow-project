@@ -13,7 +13,7 @@ Una aplicación web de **gestión de tareas y proyectos**
 - **Persistencia de datos**
   - **LocalStorage** - Compatible con la mayoría de navegadores
 
-# TaskFlow V1
+# TaskFlow V1 - Tailwind
 
 ## Nuevas Características:
 - **Ahora podemos eliminar también proyectos, no solo tareas** - Ahora podemos gestionar totalmente los proyectos
@@ -43,3 +43,7 @@ Una aplicación web de **gestión de tareas y proyectos**
 ### CSS y Media Query
    - **https://www.w3schools.com/css/default.asp**
    - **https://www.w3schools.com/css/css_rwd_mediaqueries.asp**
+
+## Autor
+
+Francisco J. Fernández Cala
