@@ -1,7 +1,6 @@
-/* logica y visualizacion de filtros */
+/* filtros - fecha - proyecto - busqueda - actualización de chips/nav */
 
 const Filtros = {
-  /* filtros disponibles */
   definiciones: {
     todas: (tareas) => tareas,
     alta: (tareas) => tareas.filter((t) => t.prioridad === "alta"),
@@ -9,7 +8,7 @@ const Filtros = {
     baja: (tareas) => tareas.filter((t) => t.prioridad === "baja"),
     hoy: (tareas) => {
       const hoy = new Date().toISOString().split("T")[0];
-      return tareas.filter((t) => !t.hecha && t.fecha.startsWith(hoy));
+      return tareas.filter((t) => !t.hecha && t.fecha?.startsWith(hoy));
     },
     semana: (tareas) => {
       const ahora = new Date();
@@ -21,7 +20,7 @@ const Filtros = {
       finSemana.setHours(23, 59, 59, 999);
       return tareas.filter((t) => {
         if (!t.fecha || t.fecha === "Sin fecha") return false;
-        const fecha = new Date(t.fecha);
+        const fecha = new Date(t.fecha.split(" ")[0] + "T00:00:00");
         return fecha >= inicioSemana && fecha <= finSemana;
       });
     },
@@ -36,30 +35,18 @@ const Filtros = {
     "completadas-vista": (tareas) => tareas.filter((t) => t.hecha),
   },
 
-  /* tareas segun filtro activo */
+  /** tareas visibles por filtro activo y texto de busqueda */
   obtenerVisibles() {
-    const { tareas } = State;
-    const filtro = State.filtroActivo;
-
-    let resultado;
-    if (this.definiciones[filtro]) {
-      resultado = this.definiciones[filtro](tareas);
-    } else {
-      resultado = tareas.filter((t) => t.proyecto === filtro);
+    const { tareas, filtroActivo, busqueda } = State;
+    const fn = this.definiciones[filtroActivo];
+    let lista = fn ? fn(tareas) : tareas.filter((t) => t.proyecto === filtroActivo);
+    if (busqueda) {
+      const texto = busqueda.toLowerCase();
+      lista = lista.filter((t) => t.titulo.toLowerCase().includes(texto));
     }
-
-    // aplica búsqueda de texto sobre el resultado
-    if (State.busqueda) {
-      const texto = State.busqueda.toLowerCase();
-      resultado = resultado.filter((t) =>
-        t.titulo.toLowerCase().includes(texto)
-      );
-    }
-
-    return resultado;
+    return lista;
   },
 
-  /* inicializa el listener del input de búsqueda */
   init() {
     const input = Utils.getElement("input-busqueda");
     if (!input) return;
@@ -73,35 +60,16 @@ const Filtros = {
     );
   },
 
-  /* cambia filtro activo y actualiza */
   cambiarFiltro(nuevoFiltro) {
     State.filtroActivo = nuevoFiltro;
     this.actualizarUIFiltros();
     Render.renderizarTareas();
   },
 
-  /* actualiza botones de filtro */
   actualizarUIFiltros() {
-    // actualizar chips filtro
-    Utils.getElements(".filter-chip").forEach((chip) => {
-      const esActivo = chip.dataset.filtro === State.filtroActivo;
-      Utils.toggleClass(chip, "active", esActivo);
-    });
-
-    // actualizar items navegacion
-    Utils.getElements(".nav-item[data-vista]").forEach((item) => {
-      const esActivo = item.dataset.vista === State.filtroActivo;
-      Utils.toggleClass(item, "active", esActivo);
-    });
+    const activo = State.filtroActivo;
+    Utils.getElements(".filter-chip").forEach((el) => Utils.toggleClass(el, "active", el.dataset.filtro === activo));
+    Utils.getElements(".nav-item[data-vista]").forEach((el) => Utils.toggleClass(el, "active", el.dataset.vista === activo));
   },
 
-  /* filtros bases disponibles */
-  obtenerFiltrosBase() {
-    return [
-      { etiqueta: "Todas", valor: "todas" },
-      { etiqueta: "Alta", valor: "alta" },
-      { etiqueta: "Media", valor: "media" },
-      { etiqueta: "Baja", valor: "baja" },
-    ];
-  },
 };

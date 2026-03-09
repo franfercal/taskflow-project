@@ -1,4 +1,4 @@
-/* LocalStorage para persistencia */
+/* persistencia localStorage. tareas-proyectos-siguienteId */
 
 const Persistencia = {
   KEYS: {
@@ -27,14 +27,6 @@ const Persistencia = {
       if (id) State.siguienteId = parseInt(id, 10);
     } catch (e) {
       console.error("Error al cargar", e);
-    }
-  },
-
-  limpiar() {
-    try {
-      Object.values(this.KEYS).forEach((k) => localStorage.removeItem(k));
-    } catch (e) {
-      console.error("Error al limpiar", e);
     }
   },
 };

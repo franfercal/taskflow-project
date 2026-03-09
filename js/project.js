@@ -1,7 +1,6 @@
-/* Creación y eliminación de proyectos */
+/* proyecto - agregar - eliminar - contar pendiente */
 
 const ProyectosController = {
-  /* añade nuevo proyecto */
   agregar(nombre) {
     const nombreLimpio = nombre?.trim();
 
@@ -21,28 +20,26 @@ const ProyectosController = {
     return true;
   },
 
-  /* elimina proyecto */
   eliminar(nombre) {
     const indice = State.proyectos.indexOf(nombre);
     if (indice > -1) {
       State.proyectos.splice(indice, 1);
-      //elimina tareas de proyecto
       State.tareas = State.tareas.filter((t) => t.proyecto !== nombre);
+      if (State.filtroActivo === nombre) State.filtroActivo = "todas";
       this.actualizarUI();
+      Render.renderizarTareas();
       Persistencia.guardar();
       return true;
     }
     return false;
   },
 
-  /* obtiene tareas pend de proeycto */
   obtenerPendientesPorProyecto(proyecto) {
     return State.tareas.filter(
       (t) => t.proyecto === proyecto && !t.hecha
     ).length;
   },
 
-  /* actualiza todos los comp de proyectos*/
   actualizarUI() {
     Render.renderizarProyectosLateral();
     Render.renderizarFiltros();

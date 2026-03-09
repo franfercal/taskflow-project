@@ -1,3 +1,5 @@
+/* alterna modo claro/oscuro - aaplica clase .dark en <html> */
+
 const Tema = {
   CLAVE: "taskflow-tema",
   ICONO_CLARO: "☀",
@@ -5,7 +7,7 @@ const Tema = {
   btn: null,
 
   init() {
-    this.btn = document.getElementById("btn-tema");
+    this.btn = Utils.getElement("btn-tema");
     const guardado = localStorage.getItem(this.CLAVE);
     const esOscuro = guardado ? guardado === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
     this.aplicar(esOscuro);

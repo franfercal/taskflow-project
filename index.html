@@ -11,128 +11,170 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
     <link rel="stylesheet" href="styles/output.css" />
   </head>
-  <body>
-    <!-- cabezera    -->
-    <header>
-      <div class="logo">Task<span>Flow</span></div>
-      <div class="header-meta">
-        <span class="header-fecha" id="fecha-actual"></span>
-        <button class="btn-tema" id="btn-tema" aria-label="Cambiar tema" title="Cambiar tema">☀</button>
-        <button class="btn-menu" id="btn-menu" aria-label="Abrir menú">
+  <body class="min-h-screen grid grid-rows-[auto_1fr_auto] bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased">
+    <!-- Cabecera -->
+    <header class="sticky top-0 z-[100] flex items-center justify-between gap-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 sm:px-6 py-3">
+      <div class="font-extrabold text-xl sm:text-2xl tracking-tight">
+        Task<span class="text-blue-600 dark:text-blue-400">Flow</span>
+      </div>
+      <div class="flex items-center gap-3 sm:gap-4">
+        <span class="font-mono text-xs text-gray-500 dark:text-gray-400 tracking-wide hidden sm:inline" id="fecha-actual"></span>
+        <!-- btn tema -->
+        <button
+          type="button"
+          id="btn-tema"
+          aria-label="Cambiar tema"
+          title="Cambiar tema"
+          class="w-9 h-9 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-gray-500 dark:text-gray-400 flex items-center justify-center text-base transition-all duration-200 ease-out hover:border-blue-500 dark:hover:border-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 focus:border-blue-500"
+        >
+          ☀
+        </button>
+        <button
+          type="button"
+          id="btn-menu"
+          aria-label="Abrir menú"
+          class="md:hidden flex flex-col gap-1.5 p-2 bg-transparent border-none cursor-pointer [&>span]:bg-gray-900 dark:[&>span]:bg-gray-100 [&>span]:rounded-sm [&>span]:w-[22px] [&>span]:h-0.5 [&>span]:transition-all [&>span]:duration-200"
+        >
           <span></span><span></span><span></span>
         </button>
-        <div class="avatar">Avatar</div>
+        <div class="w-9 h-9 rounded-full bg-blue-600 dark:bg-blue-500 text-white font-bold text-sm flex items-center justify-center shrink-0">
+          Avatar
+        </div>
       </div>
     </header>
 
-    <div class="wrapper">
-      <!-- aside -->
-      <aside id="sidebar">
-        <div class="sidebar-section">
-          <h3>Vistas</h3>
-          <nav>
-            <div class="nav-item active" data-vista="todas">
-              <span class="nav-icon">◈</span><span class="nav-label">Todas</span>
-              <span class="nav-counter" id="cnt-todas">0</span>
+    <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row gap-4 md:gap-6 p-4 sm:p-6">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="flex flex-col shrink-0 w-full md:w-[270px] gap-5 overflow-hidden md:overflow-visible border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 md:p-0 p-5 rounded-lg md:rounded-none flex-wrap md:flex-nowrap order-2 md:order-1">
+        <div class="flex flex-col gap-1 min-w-0 md:min-w-[140px] order-1">
+          <h3 class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Vistas</h3>
+          <nav class="flex flex-col gap-0.5">
+            <div class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="todas">
+              <span class="w-5 text-base flex items-center justify-center shrink-0">◈</span>
+              <span class="flex-1 whitespace-nowrap">Todas</span>
+              <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-todas">0</span>
             </div>
-            <div class="nav-item" data-vista="hoy">
-              <span class="nav-icon">◎</span><span class="nav-label">Hoy</span>
-              <span class="nav-counter" id="cnt-hoy">0</span>
+            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="hoy">
+              <span class="w-5 text-base flex items-center justify-center shrink-0">◎</span>
+              <span class="flex-1 whitespace-nowrap">Hoy</span>
+              <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-hoy">0</span>
             </div>
-            <div class="nav-item" data-vista="semana">
-              <span class="nav-icon">◷</span><span class="nav-label">Esta semana</span>
-              <span class="nav-counter" id="cnt-semana">0</span>
+            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="semana">
+              <span class="w-5 text-base flex items-center justify-center shrink-0">◷</span>
+              <span class="flex-1 whitespace-nowrap">Esta semana</span>
+              <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-semana">0</span>
             </div>
-            <div class="nav-item" data-vista="mes">
-              <span class="nav-icon">◑</span><span class="nav-label">Este mes</span>
-              <span class="nav-counter" id="cnt-mes">0</span>
+            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="mes">
+              <span class="w-5 text-base flex items-center justify-center shrink-0">◑</span>
+              <span class="flex-1 whitespace-nowrap">Este mes</span>
+              <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-mes">0</span>
             </div>
-            <div class="nav-item" data-vista="pendientes">
-              <span class="nav-icon">◻</span><span class="nav-label">Sin completar</span>
-              <span class="nav-counter" id="cnt-pendientes">0</span>
+            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="pendientes">
+              <span class="w-5 text-base flex items-center justify-center shrink-0">◻</span>
+              <span class="flex-1 whitespace-nowrap">Sin completar</span>
+              <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-pendientes">0</span>
             </div>
-            <div class="nav-item" data-vista="completadas-vista">
-              <span class="nav-icon">✓</span><span class="nav-label">Completadas</span>
-              <span class="nav-counter" id="cnt-completadas">0</span>
+            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="completadas-vista">
+              <span class="w-5 text-base flex items-center justify-center shrink-0">✓</span>
+              <span class="flex-1 whitespace-nowrap">Completadas</span>
+              <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-completadas">0</span>
             </div>
           </nav>
         </div>
 
-        <div class="sidebar-section">
-          <h3>Proyectos</h3>
+        <!-- proyectos -->
+        <div class="flex flex-col gap-1 min-w-0 md:min-w-[140px] order-2">
+          <h3 class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Proyectos</h3>
           <nav id="nav-proyectos"></nav>
         </div>
 
-        <div class="sidebar-section">
-          <h3>Progreso</h3>
-          <div class="estadisticas-grid">
-            <div class="estadistica-card estadistica-card--clickable" data-filtro="completadas-vista">
-              <div class="estadistica-valor" id="est-completadas">0</div>
-              <div class="estadistica-nombre">Terminadas</div>
+        <div class="flex flex-col gap-1 min-w-0 md:min-w-[140px] order-3">
+          <h3 class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Progreso</h3>
+          <div class="estadisticas-grid grid grid-cols-2 gap-3">
+            <div class="estadistica-card rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-3 px-4 cursor-pointer transition-all duration-200 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-white dark:hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-filtro="completadas-vista">
+              <div class="font-extrabold text-xl leading-none text-blue-600 dark:text-blue-400" id="est-completadas">0</div>
+              <div class="font-mono text-xs text-gray-500 dark:text-gray-400 mt-1">Terminadas</div>
             </div>
-            <div class="estadistica-card estadistica-card--clickable" data-filtro="pendientes">
-              <div class="estadistica-valor" id="est-pendientes">0</div>
-              <div class="estadistica-nombre">Sin Terminar</div>
+            <div class="estadistica-card rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-3 px-4 cursor-pointer transition-all duration-200 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-white dark:hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-filtro="pendientes">
+              <div class="font-extrabold text-xl leading-none text-blue-600 dark:text-blue-400" id="est-pendientes">0</div>
+              <div class="font-mono text-xs text-gray-500 dark:text-gray-400 mt-1">Sin Terminar</div>
             </div>
           </div>
         </div>
       </aside>
 
       <!-- main -->
-      <main>
-        <div class="section-header">
-          <div class="section-title">
-            Mis Tareas
-            <small id="subtitle-pendientes">Cargando...</small>
+      <main class="flex-1 min-w-0 order-1 md:order-2">
+        <div class="flex items-center justify-between gap-4 mb-5">
+          <div>
+            <h1 class="font-extrabold text-2xl sm:text-3xl leading-tight tracking-tight">
+              Mis Tareas
+              <small class="block font-normal text-gray-500 dark:text-gray-400 text-sm mt-1" id="subtitle-pendientes">Cargando...</small>
+            </h1>
           </div>
-          <button class="btn-nueva-tarea">+ Nueva tarea</button>
+          <button
+            type="button"
+            class="btn-nueva-tarea flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white font-bold text-sm whitespace-nowrap border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 dark:hover:bg-blue-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          >
+            + Nueva tarea
+          </button>
         </div>
 
-        <!-- busqueda -->
-        <div class="buscador">
-          <span class="buscador-icono">⌕</span>
+        <!-- buscador -->
+        <div class="relative mb-4">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-[1.15rem] pointer-events-none">⌕</span>
           <input
             type="search"
             id="input-busqueda"
             placeholder="Buscar tarea..."
             autocomplete="off"
+            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans text-sm placeholder:font-mono placeholder:text-gray-500 dark:placeholder:text-gray-400 placeholder:text-xs placeholder:tracking-wide outline-none transition-all duration-200 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 [&::-webkit-search-cancel-button]:appearance-none"
           />
         </div>
 
-        <!-- filtros -->
-        <div class="filters" id="filters"></div>
+        <!-- filtros prioridad -->
+        <div class="flex flex-wrap justify-center gap-2 mb-5" id="filters"></div>
 
-        <!-- contenedor de tareas -->
+        <!-- lista tareas -->
         <div id="task-list"></div>
       </main>
     </div>
 
-    <!-- nueva tarea modal -->
-    <div id="modal-backdrop" class="modal-backdrop hidden">
-      <div class="modal">
-        <div class="modal-header">
-          <h2 class="modal-title">Nueva tarea</h2>
-          <button class="btn-close-modal" id="btn-close-modal">✕</button>
+    <!-- Modal -->
+    <div id="modal-backdrop" class="modal-backdrop fixed inset-0 z-[500] flex items-center justify-center p-4 bg-black/35 backdrop-blur-sm hidden">
+      <div class="modal w-full max-w-[480px] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl animate-subir">
+        <div class="flex items-center justify-between pt-5 px-5">
+          <h2 class="font-bold text-lg text-gray-900 dark:text-gray-100">Nueva tarea</h2>
+          <button
+            type="button"
+            id="btn-close-modal"
+            aria-label="Cerrar"
+            class="w-8 h-8 rounded flex items-center justify-center shrink-0 bg-transparent border-none text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+          >
+            ✕
+          </button>
         </div>
 
-        <div class="modal-body">
-          <div class="field">
-            <label>Título</label>
+        <div class="flex flex-col gap-4 p-5">
+          <div class="field flex flex-col gap-2">
+            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Título</label>
             <input
               type="text"
               id="field-titulo"
-              placeholder="¿Que hay que hacer?"
+              placeholder="¿Qué hay que hacer?"
               maxlength="80"
+              class="field-input w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none transition-all duration-200 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 hover:border-gray-300 dark:hover:border-gray-500"
             />
           </div>
-          <div class="fields-row">
-            <div class="field">
-              <label>Proyecto</label>
-              <select id="field-proyecto"></select>
+          <div class="fields-row flex gap-4">
+            <div class="field flex flex-col gap-2 flex-1">
+              <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Proyecto</label>
+              <select id="field-proyecto" class="field-input w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none transition-all duration-200 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 hover:border-gray-300 dark:hover:border-gray-500 cursor-pointer">
+              </select>
             </div>
-            <div class="field">
-              <label>Prioridad</label>
-              <select id="field-prioridad">
+            <div class="field flex flex-col gap-2 flex-1">
+              <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Prioridad</label>
+              <select id="field-prioridad" class="field-input w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none transition-all duration-200 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 hover:border-gray-300 dark:hover:border-gray-500 cursor-pointer">
                 <option value="alta">Alta</option>
                 <option value="media" selected>Media</option>
                 <option value="baja">Baja</option>
@@ -140,56 +182,74 @@
             </div>
           </div>
 
-          <!-- crear proyecto -->
-          <div class="field" id="field-nuevo-proyecto" style="display: none">
-            <label>Nombre del nuevo proyecto</label>
-            <div style="display: flex; gap: var(--espacio-2)">
+          <!-- crear nuevo proyecto -->
+          <div class="field hidden flex-col gap-2" id="field-nuevo-proyecto">
+            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nombre del nuevo proyecto</label>
+            <div class="flex gap-2">
               <input
                 type="text"
                 id="field-nombre-proyecto"
                 maxlength="30"
-                style="flex: 1"
+                class="field-input flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-gray-300 dark:hover:border-gray-500"
               />
               <button
                 type="button"
                 id="btn-confirmar-proyecto"
-                class="btn-guardar"
-                style="
-                  white-space: nowrap;
-                  padding: var(--espacio-3) var(--espacio-4);
-                "
+                class="px-4 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white font-bold text-sm whitespace-nowrap border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 dark:hover:bg-blue-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
               >
                 Crear
               </button>
             </div>
           </div>
 
-          <div class="field">
-            <label>Fecha / hora límite</label>
-            <div class="fields-fecha">
-              <input type="date" id="field-fecha-dia" />
-              <input type="time" id="field-fecha-hora" />
+          <div class="field flex flex-col gap-2">
+            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha / hora límite</label>
+            <div class="fields-fecha flex flex-wrap items-center gap-3">
+              <input type="date" id="field-fecha-dia" class="field-input w-36 min-w-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono text-xs outline-none transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" />
+              <div class="reloj-wrapper relative flex items-center gap-2">
+                <input type="hidden" id="field-fecha-hora" value="" />
+                <button type="button" id="reloj-display" class="reloj-display w-12 h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono text-xs font-semibold flex items-center justify-center shrink-0 hover:border-blue-500 dark:hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-all duration-200" aria-label="Elegir hora" title="Elegir hora">--:--</button>
+                <div id="reloj-popover" class="reloj-popover absolute left-0 top-full z-[600] mt-2 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-xl hidden" role="dialog" aria-label="Elegir hora">
+                  <div class="reloj-cara flex items-center justify-center mb-3" id="reloj-cara"></div>
+                  <div class="reloj-acciones flex justify-between items-center gap-2">
+                    <span class="reloj-valor-actual font-mono text-sm text-gray-500 dark:text-gray-400" id="reloj-valor-actual">00:00</span>
+                    <button type="button" id="reloj-listo" class="px-3 py-1.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors">Listo</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="modal-footer">
-          <button class="btn-cancelar" id="btn-cancelar-modal">Cancelar</button>
-          <button class="btn-guardar" id="btn-guardar-tarea">
+        <div class="flex justify-end gap-3 pb-5 px-5">
+          <button
+            type="button"
+            id="btn-cancelar-modal"
+            class="px-5 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-gray-500 dark:text-gray-400 font-sans text-sm cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            id="btn-guardar-tarea"
+            class="px-5 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white font-bold text-sm whitespace-nowrap border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 dark:hover:bg-blue-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          >
             Guardar tarea
           </button>
         </div>
       </div>
     </div>
 
-    <!-- mensaje bienvenida -->
-    <div id="welcome-toast" class="welcome-toast" role="status" aria-live="polite">
-      <span class="welcome-toast-icon" id="welcome-toast-icon">◈</span>
-      <div class="welcome-toast-body">
-        <span class="welcome-toast-label">Bienvenido</span>
-        <span class="welcome-toast-msg" id="welcome-toast-msg"></span>
+    <!-- bienvenida -->
+    <div id="welcome-toast" class="welcome-toast fixed inset-0 z-[600] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-out" role="status" aria-live="polite">
+      <div class="welcome-toast-box flex items-center gap-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 px-6 shadow-2xl min-w-[320px] max-w-[90vw] scale-95 transition-transform duration-300 ease-out">
+        <span class="welcome-toast-icon shrink-0 text-[1.4rem]" id="welcome-toast-icon">◈</span>
+        <div class="flex flex-col flex-1 gap-0.5">
+          <span class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest">Bienvenido</span>
+          <span class="font-bold text-lg text-gray-900 dark:text-gray-100 leading-snug" id="welcome-toast-msg"></span>
+        </div>
+        <button type="button" class="welcome-toast-close w-[26px] h-[26px] rounded flex items-center justify-center shrink-0 bg-transparent border-none text-gray-500 dark:text-gray-400 cursor-pointer text-[0.8rem] transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" id="welcome-toast-close" aria-label="Cerrar">✕</button>
       </div>
-      <button class="welcome-toast-close" id="welcome-toast-close" aria-label="Cerrar">✕</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

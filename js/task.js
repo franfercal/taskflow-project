@@ -1,7 +1,6 @@
-/* Creación, actualización y eliminación de tareas */
+/* crud tareas agregar-marcar hecha-eliminar - actualiza UI - persistencia */
 
 const TareasController = {
-  /* añade nueva tarea al estado */
   agregar(titulo, proyecto, prioridad, fecha) {
     if (Utils.estaVacio(titulo)) {
       console.warn("Imposible añadir tarea sin título");
@@ -23,7 +22,6 @@ const TareasController = {
     return true;
   },
 
-  /* alterna estado tarea */
   alternarHecha(id) {
     const tarea = State.tareas.find((t) => t.id === id);
     if (tarea) {
@@ -33,18 +31,15 @@ const TareasController = {
     }
   },
 
-  /* elimina tarea */
   eliminar(id) {
     State.tareas = State.tareas.filter((t) => t.id !== id);
     this.actualizarUI();
     Persistencia.guardar();
   },
 
-  /* actualiza todo rela con tareas */
   actualizarUI() {
     Render.renderizarTareas();
     Render.renderizarProyectosLateral();
     Render.renderizarFiltros();
-    Estadisticas.actualizar();
   },
 };
