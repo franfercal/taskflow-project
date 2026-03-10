@@ -3,7 +3,10 @@
 const Navegacion = {
   init() {
     Utils.getElements(".nav-item[data-vista]").forEach((item) => {
-      item.addEventListener("click", () => Filtros.cambiarFiltro(item.dataset.vista));
+      item.addEventListener("click", () => {
+        Filtros.cambiarFiltro(item.dataset.vista);
+        Utils.removeClass(sidebar, "open");
+      });
     });
     const btnMenu = Utils.getElement("btn-menu");
     const sidebar = Utils.getElement("sidebar");

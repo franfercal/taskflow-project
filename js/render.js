@@ -27,7 +27,11 @@ const Render = {
     if (statsGrid) {
       statsGrid.addEventListener("click", (e) => {
         const card = e.target.closest("[data-filtro]");
-        if (card) Filtros.cambiarFiltro(card.dataset.filtro);
+        if (card) {
+          Filtros.cambiarFiltro(card.dataset.filtro);
+          const sidebar = Utils.getElement("sidebar");
+          if (sidebar) Utils.removeClass(sidebar, "open");
+        }
       });
     }
     const contenedorFiltros = Utils.getElement("filters");
@@ -49,6 +53,8 @@ const Render = {
         const item = e.target.closest(".nav-item");
         if (item) {
           Filtros.cambiarFiltro(item.dataset.vista);
+          const sidebar = Utils.getElement("sidebar");
+          if (sidebar) Utils.removeClass(sidebar, "open");
         }
       });
     }
