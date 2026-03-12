@@ -1,6 +1,18 @@
-/* punto entrada app */
+/**
+ * Punto de entrada de la aplicación TaskFlow.
+ * Orquesta la carga de datos, la inicialización de módulos y la primera renderización.
+ */
 
 const App = {
+  /**
+   * Inicializa la aplicación completa:
+   * 1. Carga datos desde localStorage
+   * 2. Configura fecha actual y tema (claro/oscuro)
+   * 3. Inicializa modal, navegación, render y filtros
+   * 4. Pinta filtros, proyectos y tareas
+   * 5. Muestra el toast de bienvenida
+   * @returns {void}
+   */
   init() {
     try {
       Persistencia.cargar();
@@ -9,6 +21,7 @@ const App = {
       Tema.init();
 
       Modal.init();
+      ModalProyectos.init();
       Navegacion.init();
       Render.init();
       Filtros.init();
@@ -23,35 +36,44 @@ const App = {
     }
   },
 
+  /**
+   * Escribe en el header la fecha actual formateada (ej: "jue 12 mar 2025").
+   * @returns {void}
+   */
   configurarFecha() {
-    const el = Utils.getElement("fecha-actual");
-    if (el) Utils.setText(el, Utils.formatearFecha({ weekday: "short", day: "numeric", month: "short", year: "numeric" }));
+    const elementoFecha = Utils.getElement("fecha-actual");
+    if (elementoFecha) Utils.setText(elementoFecha, Utils.formatearFecha({ weekday: "short", day: "numeric", month: "short", year: "numeric" }));
   },
 
+  /**
+   * Muestra un toast de bienvenida con el número de tareas pendientes.
+   * Se oculta solo a los 3 segundos o al hacer clic en cerrar.
+   * @returns {void}
+   */
   mostrarBienvenida() {
     const toast = Utils.getElement("welcome-toast");
-    const msgEl = Utils.getElement("welcome-toast-msg");
-    const iconEl = Utils.getElement("welcome-toast-icon");
-    const closeEl = Utils.getElement("welcome-toast-close");
-    if (!toast || !msgEl || !iconEl || !closeEl) return;
+    const elementoMensaje = Utils.getElement("welcome-toast-msg");
+    const elementoIcono = Utils.getElement("welcome-toast-icon");
+    const elementoCerrar = Utils.getElement("welcome-toast-close");
+    if (!toast || !elementoMensaje || !elementoIcono || !elementoCerrar) return;
 
-    const pendientes = State.tareas.filter((t) => !t.hecha).length;
-    const plural = pendientes !== 1 ? "s" : "";
-    msgEl.textContent = pendientes > 0
+    const pendientes = State.tareas.filter((tarea) => !tarea.hecha).length;
+    const plural = Utils.plural(pendientes);
+    elementoMensaje.textContent = pendientes > 0
       ? `¡¡¡Tienes ${pendientes} tarea${plural} pendiente${plural}!!!`
       : "¡¡No tienes tareas pendientes!!!";
-    iconEl.textContent = pendientes > 0 ? "⚠" : "✓";
-    iconEl.classList.toggle("con-pendientes", pendientes > 0);
-    iconEl.classList.toggle("sin-pendientes", pendientes === 0);
+    elementoIcono.textContent = pendientes > 0 ? "⚠" : "✓";
+    elementoIcono.classList.toggle("con-pendientes", pendientes > 0);
+    elementoIcono.classList.toggle("sin-pendientes", pendientes === 0);
 
     requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add("visible")));
     const ocultar = () => toast.classList.remove("visible");
-    const timer = setTimeout(ocultar, 3000);
-    closeEl.addEventListener("click", () => { clearTimeout(timer); ocultar(); }, { once: true });
+    const temporizador = setTimeout(ocultar, 3000);
+    elementoCerrar.addEventListener("click", () => { clearTimeout(temporizador); ocultar(); }, { once: true });
   },
 };
 
-// iniciar app cuando el DOM este cargado
+// Arranque: cuando el DOM está listo se ejecuta App.init()
 document.addEventListener("DOMContentLoaded", () => {
   App.init();
 });

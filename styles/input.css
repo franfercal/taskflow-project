@@ -18,6 +18,11 @@
 
 /* Estados activos que el JS alterna con la clase .active (no se pueden expresar solo con utilidades) */
 @layer components {
+  /* Clase común para ítems de navegación de Vistas en el sidebar (evita repetir muchas clases en el HTML) */
+  .nav-item-vista {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset;
+  }
+
   .nav-item.active {
     @apply border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-blue-600 dark:text-blue-400;
   }

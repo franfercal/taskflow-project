@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- TaskFlow: app de gestión de tareas con proyectos, prioridades, filtros y tema claro/oscuro -->
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -48,33 +49,33 @@
       <aside id="sidebar" class="flex flex-col shrink-0 w-full md:w-[270px] gap-5 overflow-hidden md:overflow-visible border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 md:p-0 md:pr-6 p-5 rounded-lg md:rounded-none flex-wrap md:flex-nowrap order-2 md:order-1">
         <div class="flex flex-col gap-1 min-w-0 md:min-w-[140px] order-1">
           <h3 class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Vistas</h3>
-          <nav class="flex flex-col gap-0.5">
-            <div class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="todas">
+          <nav class="flex flex-col gap-0.5" aria-label="Vistas de tareas">
+            <div class="nav-item nav-item-vista active" data-vista="todas">
               <span class="w-5 text-base flex items-center justify-center shrink-0">◈</span>
               <span class="flex-1 whitespace-nowrap">Todas</span>
               <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-todas">0</span>
             </div>
-            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="hoy">
+            <div class="nav-item nav-item-vista" data-vista="hoy">
               <span class="w-5 text-base flex items-center justify-center shrink-0">◎</span>
               <span class="flex-1 whitespace-nowrap">Hoy</span>
               <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-hoy">0</span>
             </div>
-            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="semana">
+            <div class="nav-item nav-item-vista" data-vista="semana">
               <span class="w-5 text-base flex items-center justify-center shrink-0">◷</span>
               <span class="flex-1 whitespace-nowrap">Esta semana</span>
               <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-semana">0</span>
             </div>
-            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="mes">
+            <div class="nav-item nav-item-vista" data-vista="mes">
               <span class="w-5 text-base flex items-center justify-center shrink-0">◑</span>
               <span class="flex-1 whitespace-nowrap">Este mes</span>
               <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-mes">0</span>
             </div>
-            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="pendientes">
+            <div class="nav-item nav-item-vista" data-vista="pendientes">
               <span class="w-5 text-base flex items-center justify-center shrink-0">◻</span>
               <span class="flex-1 whitespace-nowrap">Sin completar</span>
               <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-pendientes">0</span>
             </div>
-            <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset" data-vista="completadas-vista">
+            <div class="nav-item nav-item-vista" data-vista="completadas-vista">
               <span class="w-5 text-base flex items-center justify-center shrink-0">✓</span>
               <span class="flex-1 whitespace-nowrap">Completadas</span>
               <span class="nav-counter font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5" id="cnt-completadas">0</span>
@@ -140,11 +141,11 @@
       </main>
     </div>
 
-    <!-- Modal -->
-    <div id="modal-backdrop" class="modal-backdrop fixed inset-0 z-[500] flex items-center justify-center p-4 bg-black/35 backdrop-blur-sm hidden">
-      <div class="modal w-full max-w-[480px] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl animate-subir">
+    <!-- Modal: Nueva tarea (role="dialog", aria-modal y focus trap en JS) -->
+    <div id="modal-backdrop" class="modal-backdrop fixed inset-0 z-[500] flex items-center justify-center p-4 bg-black/35 backdrop-blur-sm hidden" aria-hidden="true">
+      <div id="modal-nueva-tarea" class="modal w-full max-w-[480px] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl animate-subir" role="dialog" aria-modal="true" aria-labelledby="modal-nueva-tarea-titulo" aria-describedby="modal-nueva-tarea-desc">
         <div class="flex items-center justify-between pt-5 px-5">
-          <h2 class="font-bold text-lg text-gray-900 dark:text-gray-100">Nueva tarea</h2>
+          <h2 id="modal-nueva-tarea-titulo" class="font-bold text-lg text-gray-900 dark:text-gray-100">Nueva tarea</h2>
           <button
             type="button"
             id="btn-close-modal"
@@ -155,23 +156,31 @@
           </button>
         </div>
 
-        <div class="flex flex-col gap-4 p-5">
+        <div id="modal-nueva-tarea-desc" class="flex flex-col gap-4 p-5">
           <div class="field flex flex-col gap-2">
-            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Título</label>
+            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider" for="field-titulo">Título</label>
             <input
               type="text"
               id="field-titulo"
               placeholder="¿Qué hay que hacer?"
               maxlength="80"
+              aria-describedby="error-titulo"
+              aria-invalid="false"
               class="field-input w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none transition-all duration-200 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 hover:border-gray-300 dark:hover:border-gray-500"
             />
+            <span id="error-titulo" class="mensaje-error text-red-500 dark:text-red-400 text-xs font-mono mt-0.5 hidden" role="alert" aria-live="polite"></span>
+          </div>
+          <div class="field flex flex-col gap-2">
+            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Proyectos (puedes elegir varios)</label>
+            <div class="flex gap-2 flex-wrap items-center">
+              <select id="field-proyecto" class="field-input flex-1 min-w-[140px] px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none transition-all duration-200 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 hover:border-gray-300 dark:hover:border-gray-500 cursor-pointer">
+              </select>
+              <button type="button" id="btn-anadir-proyecto-modal" class="px-4 py-2.5 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-bold text-sm whitespace-nowrap border-0 cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">Añadir</button>
+            </div>
+            <div id="modal-proyectos-seleccionados" class="flex flex-wrap gap-2 mt-1 min-h-[2rem] items-center"></div>
+            <span id="error-proyectos" class="mensaje-error text-red-500 dark:text-red-400 text-xs font-mono mt-0.5 hidden" role="alert" aria-live="polite"></span>
           </div>
           <div class="fields-row flex gap-4">
-            <div class="field flex flex-col gap-2 flex-1">
-              <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Proyecto</label>
-              <select id="field-proyecto" class="field-input w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none transition-all duration-200 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 hover:border-gray-300 dark:hover:border-gray-500 cursor-pointer">
-              </select>
-            </div>
             <div class="field flex flex-col gap-2 flex-1">
               <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Prioridad</label>
               <select id="field-prioridad" class="field-input w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none transition-all duration-200 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 hover:border-gray-300 dark:hover:border-gray-500 cursor-pointer">
@@ -184,12 +193,14 @@
 
           <!-- crear nuevo proyecto -->
           <div class="field hidden flex-col gap-2" id="field-nuevo-proyecto">
-            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nombre del nuevo proyecto</label>
+            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider" for="field-nombre-proyecto">Nombre del nuevo proyecto</label>
             <div class="flex gap-2">
               <input
                 type="text"
                 id="field-nombre-proyecto"
                 maxlength="30"
+                aria-describedby="error-nombre-proyecto"
+                aria-invalid="false"
                 class="field-input flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-gray-300 dark:hover:border-gray-500"
               />
               <button
@@ -200,6 +211,7 @@
                 Crear
               </button>
             </div>
+            <span id="error-nombre-proyecto" class="mensaje-error text-red-500 dark:text-red-400 text-xs font-mono mt-0.5 hidden" role="alert" aria-live="polite"></span>
           </div>
 
           <div class="field flex flex-col gap-2">
@@ -240,6 +252,33 @@
       </div>
     </div>
 
+    <!-- Modal: Gestionar proyectos de una tarea (role="dialog", aria-modal y focus trap en JS) -->
+    <div id="modal-proyectos-backdrop" class="modal-backdrop fixed inset-0 z-[500] flex items-center justify-center p-4 bg-black/35 backdrop-blur-sm hidden" aria-hidden="true">
+      <div id="modal-proyectos-dialog" class="modal w-full max-w-[400px] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl animate-subir" role="dialog" aria-modal="true" aria-labelledby="modal-proyectos-titulo" aria-describedby="modal-proyectos-desc">
+        <div class="flex items-center justify-between pt-5 px-5">
+          <h2 id="modal-proyectos-titulo" class="font-bold text-lg text-gray-900 dark:text-gray-100">Proyectos de esta tarea</h2>
+          <button type="button" id="btn-close-modal-proyectos" aria-label="Cerrar" class="w-8 h-8 rounded flex items-center justify-center shrink-0 bg-transparent border-none text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset">✕</button>
+        </div>
+        <div id="modal-proyectos-desc" class="p-5 flex flex-col gap-4">
+          <p class="font-mono text-xs text-gray-500 dark:text-gray-400">Añade o quita proyectos. La tarea aparecerá en la vista de cada proyecto seleccionado.</p>
+          <div class="field flex flex-col gap-2">
+            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Proyectos actuales</label>
+            <div id="modal-proyectos-chips" class="flex flex-wrap gap-2 min-h-[2.5rem] items-center"></div>
+          </div>
+          <div class="field flex flex-col gap-2">
+            <label class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Añadir a otro proyecto</label>
+            <div class="flex gap-2">
+              <select id="modal-proyectos-select" class="field-input flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 cursor-pointer"></select>
+              <button type="button" id="btn-anadir-proyecto-tarea" class="px-4 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white font-bold text-sm whitespace-nowrap border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">Añadir</button>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-end pb-5 px-5">
+          <button type="button" id="btn-cerrar-modal-proyectos" class="px-5 py-2.5 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-sans text-sm cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
     <!-- bienvenida -->
     <div id="welcome-toast" class="welcome-toast fixed inset-0 z-[600] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-out" role="status" aria-live="polite">
       <div class="welcome-toast-box flex items-center gap-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 px-6 shadow-2xl min-w-[320px] max-w-[90vw] scale-95 transition-transform duration-300 ease-out">
@@ -252,18 +291,20 @@
       </div>
     </div>
 
+    <!-- Orden: núcleo (estado, utilidades, almacenamiento) → dominio (filtros, estadísticas) → controladores → UI → app -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="js/state.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/filters.js"></script>
-    <script src="js/task.js"></script>
-    <script src="js/project.js"></script>
-    <script src="js/statistics.js"></script>
-    <script src="js/render.js"></script>
-    <script src="js/modal.js"></script>
-    <script src="js/nav.js"></script>
-    <script src="js/theme.js"></script>
+    <script src="js/core/state.js"></script>
+    <script src="js/core/utils.js"></script>
+    <script src="js/core/storage.js"></script>
+    <script src="js/dominio/filters.js"></script>
+    <script src="js/controladores/task.js"></script>
+    <script src="js/controladores/project.js"></script>
+    <script src="js/dominio/statistics.js"></script>
+    <script src="js/ui/modal-proyectos.js"></script>
+    <script src="js/ui/render.js"></script>
+    <script src="js/ui/modal.js"></script>
+    <script src="js/ui/nav.js"></script>
+    <script src="js/ui/theme.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
