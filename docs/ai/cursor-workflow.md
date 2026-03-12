@@ -109,6 +109,43 @@ Las definiciones alta, media y baja pasan a usar este helper en lugar de repetir
 _obtenerClasesTarjeta(tarea): Calcula y devuelve { clasesTarjeta, clasesTitulo, clasesCheckbox, clasesBadge } según tarea.hecha y tarea.prioridad, usando siempre PRIORIDAD_CLASES (con fallback a baja).
 renderizarTarjeta() delega en este método la decisión de clases y se centra en montar el HTML con esas clases y el resto de datos de la tarea, reduciendo longitud y repetición.
 
+## Guía e instalación de servidor MCP y Pruebas
+
+### ¿Qué son los MCP? 
+
+El Model Context Protocol (MCP) es un estándar abierto y de código abierto introducido por Anthropic en noviembre de 2024 para estandarizar la forma en que los sistemas de inteligencia artificial se integran y comparten datos con herramientas externas, sistemas y fuentes de datos.
+
+### Instalación en Cursor
+
+Los MCP se configuran en el apartado de configuracion de cursor, pestaña Tools&MPC. En ella podemos hacer click en New MPC Server y, nos aparecerá un archivo .json en el cual debemos introducir, primero el nombre del mpc, en segundo lugar el comando que va a ejecutar el mpc y sus argumentos. De tal manera que el archivo queda así despues de instalar dos MPC, en este caso filsystem y puppeteer.
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/franfercal/Escritorio/Proyectos",
+        "${workspaceFolder}"
+      ]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ]
+    }
+  }
+}
+
+### Funcionamiento, usos y utilidad de estos MPC
+
+El funcionamiento es simple, ya que al instalar un MPC lo que pasa es que dotamos de capacidades extra a la ia de cursor. Por ejemplo Puppeteer dota a la ia de cursor poder hacer testing de la aplicacion web en segundo plano, abriendo un navegador chrominium y simular acciones de un usuario. Por lo tanto permite controloar el navegador para hacer pruebas automáticas.
+
+Filesystem en cambio interactúa con archivos y carpetas que tú permitas en su configuración. 
+
+Su principal utilidad es la ejecución de acciones en Agentes que no se podrían ejecutar o usar de otra manera.
 
 
 

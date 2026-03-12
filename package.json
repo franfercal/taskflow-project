@@ -6,13 +6,18 @@
   "scripts": {
     "build": "tailwindcss -i ./styles/input.css -o ./styles/output.css --minify",
     "dev": "tailwindcss -i ./styles/input.css -o ./styles/output.css --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "serve": "npx -y serve . -l 3000"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.30.3",
   "devDependencies": {
+    "@playwright/test": "^1.49.0",
     "@tailwindcss/cli": "^4.2.1",
     "tailwindcss": "^4.2.1"
   }

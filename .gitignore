@@ -1,0 +1,11 @@
+# Dependencias
+node_modules/
+
+# Playwright (tests E2E)
+test-results/
+playwright-report/
+playwright/.cache/
+blob-report/
+
+# Lockfile opcional (descomenta si usas solo npm)
+# package-lock.json
