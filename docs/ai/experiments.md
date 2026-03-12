@@ -265,4 +265,6 @@ for (let i = 1; i <= 100; i++) {
   console.log(rules.map(([d, w]) => i % d === 0 ? w : "").join("") || i);
 }
 
+## Conclusión
 
+La Ia genera un buen código, sobre todo más legible pero, lo que me he dado cuenta es que funciona mejor cuando le dices que mejore, factorize o use técnicas para mejorar tu código. Al parecer entiende mejor el código en sí que la creación de algo desde 0 con palabras. Aún así resuelve los problemas muy bien.
