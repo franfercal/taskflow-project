@@ -39,6 +39,10 @@ const Render = {
     "task-proyecto font-mono text-xs text-gray-400 dark:text-gray-500 italic",
   /** Contenedor de fecha/hora en tarjeta. */
   CLASES_FECHA_HORA: "task-fecha font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap",
+  /** Tiempo restante hasta la fecha límite (días/horas). */
+  CLASES_TIEMPO_RESTANTE: "task-tiempo-restante font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap",
+  /** Tiempo restante cuando queda poco (menos de 24 h) o ya venció. */
+  CLASES_TIEMPO_RESTANTE_URGENTE: "task-tiempo-restante font-mono text-xs text-red-600 dark:text-red-400 font-medium whitespace-nowrap",
   /** Botón gestionar proyectos (⊕) en tarjeta. */
   CLASES_BTN_GESTIONAR:
     "btn-gestionar-proyectos w-7 h-7 rounded flex items-center justify-center shrink-0 bg-transparent border-none text-gray-500 dark:text-gray-400 text-[0.9rem] opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset",
@@ -277,6 +281,40 @@ const Render = {
   },
 
   /**
+   * Calcula el tiempo restante hasta la fecha límite (o si ya pasó).
+   * Si no hay fecha o es "Sin fecha", devuelve null.
+   * @param {string} fechaStr - Fecha en "YYYY-MM-DD" o "YYYY-MM-DD HH:mm" (o State.SIN_FECHA)
+   * @returns {{ texto: string, urgente: boolean } | null} texto para mostrar; urgente = true si venció o queda &lt; 24 h
+   */
+  _obtenerTiempoRestante(fechaStr) {
+    if (!fechaStr || fechaStr === State.SIN_FECHA) return null;
+    const partes = fechaStr.trim().split(" ");
+    const parteFecha = partes[0];
+    const parteHora = partes[1];
+    const fechaLimite = parteHora
+      ? new Date(parteFecha + "T" + parteHora + ":00")
+      : new Date(parteFecha + "T23:59:59");
+    const ahora = new Date();
+    const diffMs = fechaLimite.getTime() - ahora.getTime();
+
+    if (diffMs < 0) {
+      const diasPasados = Math.floor(-diffMs / (24 * 60 * 60 * 1000));
+      const texto = diasPasados === 0 ? "Vencida" : `Venció hace ${diasPasados} d`;
+      return { texto, urgente: true };
+    }
+
+    const dias = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+    const horas = Math.floor((diffMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    const menos24h = diffMs < 24 * 60 * 60 * 1000;
+    let texto;
+    if (dias > 0 && horas > 0) texto = `${dias} d, ${horas} h`;
+    else if (dias > 0) texto = `${dias} d`;
+    else if (horas > 0) texto = `${horas} h`;
+    else texto = "< 1 h";
+    return { texto, urgente: menos24h };
+  },
+
+  /**
    * Devuelve las clases CSS aplicables a la tarjeta según prioridad y estado hecha.
    * @param {Object} tarea - Objeto tarea con hecha y prioridad
    * @param {boolean} tarea.hecha - Si la tarea está completada
@@ -310,17 +348,24 @@ const Render = {
   renderizarTarjeta(tarea) {
     const proyectos = State.proyectosDeTarea(tarea);
     const hora = this.extraerHora(tarea.fecha);
+    const tiempoRestante = this._obtenerTiempoRestante(tarea.fecha);
     const { clasesTarjeta, clasesTitulo, clasesCheckbox, clasesBadge } = this._obtenerClasesTarjeta(tarea);
     const chipsProyectos = proyectos.length
       ? proyectos
           .map((nombreProyecto) => `<span class="${this.CLASES_CHIP_PROYECTO}">${Utils.escapeHtml(nombreProyecto)}</span>`)
           .join("")
       : `<span class="${this.CLASES_SIN_PROYECTO}">Sin proyecto</span>`;
+    const spanTiempoRestante = tiempoRestante
+      ? `<span class="shrink-0 ${tiempoRestante.urgente ? this.CLASES_TIEMPO_RESTANTE_URGENTE : this.CLASES_TIEMPO_RESTANTE}" title="Tiempo hasta la fecha límite">${Utils.escapeHtml(tiempoRestante.texto)}</span>`
+      : "";
     return `
       <div class="${clasesTarjeta}" data-id="${tarea.id}">
         <div class="checkbox w-5 h-5 rounded border-2 flex items-center justify-center text-xs shrink-0 transition-all duration-200 ${clasesCheckbox}">${tarea.hecha ? "✓" : ""}</div>
         <div class="task-info flex-1 flex items-center flex-wrap gap-4 min-w-0">
-          <div class="${clasesTitulo}">${Utils.escapeHtml(tarea.titulo)}</div>
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <div class="${clasesTitulo}">${Utils.escapeHtml(tarea.titulo)}</div>
+            ${spanTiempoRestante}
+          </div>
           <div class="flex items-center gap-2 flex-wrap">${chipsProyectos}</div>
           <span class="${this.CLASES_FECHA_HORA}">${this.formatearFecha(tarea.fecha)}</span>
           ${hora ? `<span class="${this.CLASES_FECHA_HORA}">◷ ${hora}</span>` : ""}

@@ -264,3 +264,5 @@ const rules = [[3, "Fizz"], [5, "Buzz"]];
 for (let i = 1; i <= 100; i++) {
   console.log(rules.map(([d, w]) => i % d === 0 ? w : "").join("") || i);
 }
+
+

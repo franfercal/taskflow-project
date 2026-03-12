@@ -146,15 +146,3 @@ El funcionamiento es simple, ya que al instalar un MPC lo que pasa es que dotamo
 Filesystem en cambio interactúa con archivos y carpetas que tú permitas en su configuración. 
 
 Su principal utilidad es la ejecución de acciones en Agentes que no se podrían ejecutar o usar de otra manera.
-
-
-
-
-
-## Reglas del proyecto
-
-## Usso del Composer o Chat
-
-## Gestión de contexto
-
-## Configuración recomendada (.cursorrules)
