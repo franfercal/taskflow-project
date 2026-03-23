@@ -102,9 +102,13 @@ function manejadorErrores(err, req, res, next) {
 
 aplicacion.use(manejadorErrores);
 
-aplicacion.listen(numeroPuerto, "0.0.0.0", () => {
-  console.log(`Servidor escuchando en http://127.0.0.1:${numeroPuerto} (API tareas: /api/v1/tasks)`);
-  if (documentoOpenapi) {
-    console.log(`Swagger UI: http://127.0.0.1:${numeroPuerto}/api-docs   OpenAPI JSON: /openapi.json`);
-  }
-});
+if (require.main === module) {
+  aplicacion.listen(numeroPuerto, "0.0.0.0", () => {
+    console.log(`Servidor escuchando en http://127.0.0.1:${numeroPuerto} (API tareas: /api/v1/tasks)`);
+    if (documentoOpenapi) {
+      console.log(`Swagger UI: http://127.0.0.1:${numeroPuerto}/api-docs   OpenAPI JSON: /openapi.json`);
+    }
+  });
+}
+
+module.exports = aplicacion;
