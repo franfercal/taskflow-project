@@ -10,9 +10,21 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
     <link rel="stylesheet" href="styles/output.css" />
   </head>
   <body class="min-h-screen grid grid-rows-[auto_1fr_auto] bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased">
+    <div
+      id="red-bar-actividad"
+      class="fixed top-0 left-0 right-0 z-[250] h-1 overflow-hidden pointer-events-none opacity-0 transition-opacity duration-200"
+      aria-hidden="true"
+      data-visible="false"
+    >
+      <div
+        class="red-bar-actividad-indeterminate h-full w-2/5 max-w-[280px] bg-blue-500 dark:bg-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.7)]"
+      ></div>
+    </div>
     <!-- Cabecera -->
     <header class="sticky top-0 z-[100] flex items-center justify-between gap-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 sm:px-6 py-3">
       <div class="font-extrabold text-xl sm:text-2xl tracking-tight">
@@ -44,9 +56,13 @@
       </div>
     </header>
 
-    <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row gap-4 md:gap-6 p-4 sm:p-6">
-      <!-- Sidebar -->
-      <aside id="sidebar" class="flex flex-col shrink-0 w-full md:w-[270px] gap-5 overflow-hidden md:overflow-visible border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 md:p-0 md:pr-6 p-5 rounded-lg md:rounded-none flex-wrap md:flex-nowrap order-2 md:order-1">
+    <!-- Fila principal: ancho completo; margen horizontal respecto al borde de la ventana (px-4 / sm:px-6). El sidebar queda siempre a la izquierda, sin bloque max-w centrado. -->
+    <div class="w-full flex flex-1 min-h-0 flex-col md:flex-row gap-4 md:gap-6 px-4 sm:px-6 py-4 sm:py-6">
+      <!-- Sidebar: orden 1 (izquierda en escritorio, arriba en columna móvil); sticky bajo la cabecera para que siga visible al desplazar el contenido principal. -->
+      <aside
+        id="sidebar"
+        class="flex flex-col shrink-0 w-full md:w-[270px] gap-5 overflow-hidden border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 md:sticky md:top-[3.75rem] md:max-h-[calc(100dvh-3.75rem)] md:overflow-y-auto md:self-start md:p-0 md:pr-6 p-5 rounded-lg md:rounded-none flex-wrap md:flex-nowrap order-1"
+      >
         <div class="flex flex-col gap-1 min-w-0 md:min-w-[140px] order-1">
           <h3 class="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Vistas</h3>
           <nav class="flex flex-col gap-0.5" aria-label="Vistas de tareas">
@@ -105,20 +121,34 @@
       </aside>
 
       <!-- main -->
-      <main class="flex-1 min-w-0 order-1 md:order-2">
-        <div class="flex items-center justify-between gap-4 mb-5">
+      <!-- Contenido principal a la derecha del menú (orden 2). -->
+      <main class="flex-1 min-w-0 min-h-0 order-2">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
           <div>
             <h1 class="font-extrabold text-2xl sm:text-3xl leading-tight tracking-tight">
               Mis Tareas
               <small class="block font-normal text-gray-500 dark:text-gray-400 text-sm mt-1" id="subtitle-pendientes">Cargando...</small>
             </h1>
           </div>
-          <button
-            type="button"
-            class="btn-nueva-tarea flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white font-bold text-sm whitespace-nowrap border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 dark:hover:bg-blue-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-          >
-            + Nueva tarea
-          </button>
+          <!-- Acciones: limpiar completadas (secundario) y nueva tarea (primario). En pantallas estrechas se apilan. -->
+          <div class="flex flex-wrap items-center gap-2 sm:justify-end">
+            <button
+              type="button"
+              id="btn-limpiar-completadas"
+              disabled
+              title="Quita de la lista todas las tareas marcadas como hechas"
+              aria-label="Eliminar todas las tareas completadas"
+              class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 font-semibold text-sm whitespace-nowrap cursor-pointer transition-all duration-200 hover:border-red-400 dark:hover:border-red-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:hover:border-gray-200 dark:disabled:hover:border-gray-600 disabled:hover:text-gray-600 dark:disabled:hover:text-gray-400 disabled:hover:bg-white dark:disabled:hover:bg-gray-900"
+            >
+              Limpiar completadas
+            </button>
+            <button
+              type="button"
+              class="btn-nueva-tarea flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white font-bold text-sm whitespace-nowrap border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 dark:hover:bg-blue-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            >
+              + Nueva tarea
+            </button>
+          </div>
         </div>
 
         <!-- buscador -->
@@ -291,11 +321,12 @@
       </div>
     </div>
 
-    <!-- Orden: núcleo (estado, utilidades, almacenamiento) → dominio (filtros, estadísticas) → controladores → UI → app -->
+    <!-- Orden: núcleo → capa de red (js/api/client.js) → dominio → controladores → UI → app -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="js/core/state.js"></script>
     <script src="js/core/utils.js"></script>
-    <script src="js/core/storage.js"></script>
+    <script src="js/api/client.js"></script>
     <script src="js/dominio/filters.js"></script>
     <script src="js/controladores/task.js"></script>
     <script src="js/controladores/project.js"></script>

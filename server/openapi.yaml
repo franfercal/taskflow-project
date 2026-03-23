@@ -1,0 +1,325 @@
+openapi: 3.0.3
+info:
+  title: TaskFlow API — Tareas
+  description: |
+    API REST para gestión de tareas en memoria (proceso Node.js).
+    La especificación sirve de contrato para clientes y para **Swagger UI** (`/api-docs`).
+
+    **Sandbox (opcional):** con `ENABLE_API_TEST_ROUTES=true` existe `GET /api/v1/_sandbox/force-500`
+    para forzar una respuesta **500** con el mismo cuerpo que un fallo interno real.
+  version: 1.0.0
+  contact:
+    name: TaskFlow
+servers:
+  - url: http://127.0.0.1:3000
+    description: Sustituir host/puerto según `PORT` en `server/.env` (el servidor inyecta la URL real al arrancar)
+
+tags:
+  - name: Tareas
+    description: CRUD y operaciones sobre el recurso Task
+  - name: Sandbox
+    description: Rutas de prueba (requieren variable de entorno)
+
+paths:
+  /api/v1/tasks:
+    get:
+      tags: [Tareas]
+      summary: Listar todas las tareas
+      operationId: listarTareas
+      responses:
+        "200":
+          description: Lista actual de tareas (puede ser un array vacío)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+              examples:
+                varias:
+                  summary: Dos tareas de ejemplo
+                  value:
+                    - id: 1
+                      titulo: "Comprar leche"
+                      proyectos: ["Hogar"]
+                      prioridad: "media"
+                      fecha: "2026-03-24"
+                      hecha: false
+                    - id: 2
+                      titulo: "Revisar OpenAPI"
+                      proyectos: ["BackEnd", "Docs"]
+                      prioridad: "alta"
+                      fecha: "Sin fecha"
+                      hecha: true
+                vacia:
+                  summary: Sin tareas
+                  value: []
+    post:
+      tags: [Tareas]
+      summary: Crear tarea
+      operationId: crearTarea
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskCreate"
+            examples:
+              completa:
+                summary: Creación típica
+                value:
+                  titulo: "Nueva tarea desde API"
+                  proyectos: ["JS", "API"]
+                  prioridad: "baja"
+                  fecha: "2026-12-31"
+                  hecha: false
+              minima:
+                summary: Solo título (resto por defecto en servidor)
+                value:
+                  titulo: "Solo título"
+      responses:
+        "201":
+          description: Tarea creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+              example:
+                id: 3
+                titulo: "Nueva tarea desde API"
+                proyectos: ["JS", "API"]
+                prioridad: "baja"
+                fecha: "2026-12-31"
+                hecha: false
+        "400":
+          description: Cuerpo inválido (validación)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorValidacion"
+              examples:
+                tituloVacio:
+                  value:
+                    error: "El campo titulo no puede estar vacío"
+                prioridadInvalida:
+                  value:
+                    error: "El campo prioridad debe ser alta, media o baja"
+                proyectosNoArray:
+                  value:
+                    error: "El campo proyectos debe ser un array de cadenas"
+
+  /api/v1/tasks/completed:
+    delete:
+      tags: [Tareas]
+      summary: Eliminar todas las tareas completadas
+      operationId: eliminarCompletadas
+      responses:
+        "200":
+          description: Número de registros eliminados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EliminadasResponse"
+              example:
+                eliminadas: 2
+
+  /api/v1/tasks/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        example: 1
+    patch:
+      tags: [Tareas]
+      summary: Actualización parcial (PATCH)
+      operationId: actualizarTarea
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskPatch"
+            examples:
+              marcarHecha:
+                value:
+                  hecha: true
+              variosCampos:
+                value:
+                  titulo: "Título actualizado"
+                  prioridad: "media"
+                  proyectos: ["FrontEnd"]
+      responses:
+        "200":
+          description: Tarea actualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          description: Id inválido, cuerpo vacío o campo no permitido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorValidacion"
+              examples:
+                campoProhibido:
+                  value:
+                    error: "Campo no permitido: id"
+                sinCampos:
+                  value:
+                    error: "Envía al menos un campo a actualizar"
+                idNan:
+                  value:
+                    error: "El identificador debe ser un número válido"
+        "404":
+          description: No existe tarea con ese id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorNotFound"
+              example:
+                error: "NOT_FOUND"
+
+    delete:
+      tags: [Tareas]
+      summary: Eliminar una tarea por id
+      operationId: eliminarTarea
+      responses:
+        "204":
+          description: Eliminada correctamente (sin cuerpo)
+        "400":
+          description: Id mal formado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorValidacion"
+              example:
+                error: "El identificador debe ser un número válido"
+        "404":
+          description: Tarea inexistente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorNotFound"
+              example:
+                error: "NOT_FOUND"
+
+  /api/v1/_sandbox/force-500:
+    get:
+      tags: [Sandbox]
+      summary: Forzar error interno (500) — solo con ENABLE_API_TEST_ROUTES
+      description: |
+        Requiere `ENABLE_API_TEST_ROUTES=true` en el entorno. Si la variable no está activa,
+        esta ruta **no existe** (Express devolverá 404 vía estáticos o siguiente capa).
+      operationId: sandboxForce500
+      responses:
+        "500":
+          description: Error interno deliberado (mismo formato que fallos reales no capturados)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInterno"
+              example:
+                error: "INTERNAL_SERVER_ERROR"
+                mensaje: "Error interno del servidor"
+
+components:
+  schemas:
+    Task:
+      type: object
+      required: [id, titulo, proyectos, prioridad, fecha, hecha]
+      properties:
+        id:
+          type: integer
+        titulo:
+          type: string
+        proyectos:
+          type: array
+          items:
+            type: string
+        prioridad:
+          type: string
+          enum: [alta, media, baja]
+        fecha:
+          type: string
+          description: ISO fecha o texto libre; el servidor acepta "Sin fecha"
+        hecha:
+          type: boolean
+
+    TaskCreate:
+      type: object
+      required: [titulo]
+      properties:
+        titulo:
+          type: string
+          minLength: 1
+        proyectos:
+          type: array
+          items:
+            type: string
+        prioridad:
+          type: string
+          enum: [alta, media, baja]
+        fecha:
+          type: string
+        hecha:
+          type: boolean
+
+    TaskPatch:
+      type: object
+      minProperties: 1
+      properties:
+        titulo:
+          type: string
+        proyectos:
+          type: array
+          items:
+            type: string
+        prioridad:
+          type: string
+          enum: [alta, media, baja]
+        fecha:
+          type: string
+        hecha:
+          type: boolean
+      description: |
+        Solo se permiten estas claves. Cualquier otra produce 400.
+
+    EliminadasResponse:
+      type: object
+      required: [eliminadas]
+      properties:
+        eliminadas:
+          type: integer
+          minimum: 0
+
+    ErrorValidacion:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Mensaje en español según regla de validación
+
+    ErrorNotFound:
+      type: object
+      properties:
+        error:
+          type: string
+          example: NOT_FOUND
+        mensaje:
+          type: string
+          description: Presente cuando responde el middleware global con mapeo NOT_FOUND
+
+    ErrorInterno:
+      type: object
+      required: [error, mensaje]
+      properties:
+        error:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+        mensaje:
+          type: string
+          example: Error interno del servidor

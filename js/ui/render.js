@@ -1,8 +1,3 @@
-/**
- * Módulo de renderizado: pinta la lista de tareas, los filtros, la barra de proyectos y las tarjetas.
- * Usa delegación de eventos en los contenedores para clics en eliminar, marcar hecha, filtros y proyectos.
- */
-
 const Render = {
   /**
    * Clases Tailwind por prioridad: borde de la tarjeta y estilo del badge (alta=rojo, media=naranja, baja=azul).
@@ -34,6 +29,12 @@ const Render = {
   /** Chip de proyecto en la tarjeta (con borde y fondo). */
   CLASES_CHIP_PROYECTO:
     "task-proyecto font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 rounded px-2.5 py-1",
+  /** Panel de carga mientras GET /tasks no ha respondido. */
+  CLASES_PANEL_CARGA_LISTA:
+    "red-estado-carga flex flex-col items-center justify-center py-16 px-6 rounded-xl border-2 border-dashed border-blue-200 dark:border-blue-800/60 bg-blue-50/60 dark:bg-blue-950/25",
+  /** Panel de error al cargar la lista (400, 500 o red). */
+  CLASES_PANEL_ERROR_LISTA:
+    "red-estado-error flex flex-col items-stretch max-w-lg mx-auto py-8 px-6 rounded-xl border-2 bg-amber-50/80 dark:bg-amber-950/20 text-gray-900 dark:text-gray-100",
   /** Placeholder cuando la tarea no tiene proyecto. */
   CLASES_SIN_PROYECTO:
     "task-proyecto font-mono text-xs text-gray-400 dark:text-gray-500 italic",
@@ -84,15 +85,61 @@ const Render = {
    * - estadisticas-grid: clic en tarjeta con data-filtro → cambiar filtro y cerrar sidebar en móvil
    * - filters: clic en filter-chip → cambiar filtro
    * - nav-proyectos: clic en btn-eliminar-proyecto → eliminar proyecto; clic en nav-item → cambiar vista y cerrar sidebar
+   * - btn-limpiar-completadas: SweetAlert2 (confirmación) y borrado masivo de tareas hechas
    * @returns {void}
    */
   init() {
+    // Reintento de carga inicial: el botón vive dentro de #task-list (contenido dinámico).
+    const areaPrincipal = document.querySelector("main");
+    if (areaPrincipal) {
+      areaPrincipal.addEventListener("click", (evento) => {
+        const botonReintentar = evento.target.closest("#btn-reintentar-lista-tareas");
+        if (botonReintentar) {
+          evento.preventDefault();
+          TareasController.reintentarCargaLista();
+        }
+      });
+    }
+
+    const botonLimpiarCompletadas = Utils.getElement("btn-limpiar-completadas");
+    if (botonLimpiarCompletadas) {
+      botonLimpiarCompletadas.addEventListener("click", async () => {
+        const tareasHechas = State.tareas.filter((tarea) => tarea.hecha);
+        const cantidad = tareasHechas.length;
+        if (cantidad === 0) return;
+        const plural = Utils.plural(cantidad);
+        // SweetAlert2 expone Swal en global al cargar sweetalert2.all.min.js desde el CDN.
+        if (typeof Swal === "undefined") {
+          console.error("SweetAlert2 no está cargado; no se puede mostrar la confirmación.");
+          return;
+        }
+        const esModoOscuro = document.documentElement.classList.contains("dark");
+        const resultado = await Swal.fire({
+          title: "¿Eliminar tareas completadas?",
+          html: `Se eliminarán <strong>${cantidad}</strong> tarea${plural} completada${plural}.<br/>Esta acción <strong>no se puede deshacer</strong>.`,
+          icon: "warning",
+          iconColor: esModoOscuro ? "#fbbf24" : "#d97706",
+          showCancelButton: true,
+          focusCancel: true,
+          confirmButtonText: "Sí, eliminar",
+          cancelButtonText: "Cancelar",
+          confirmButtonColor: "#2563eb",
+          cancelButtonColor: esModoOscuro ? "#374151" : "#9ca3af",
+          background: esModoOscuro ? "#111827" : "#ffffff",
+          color: esModoOscuro ? "#f3f4f6" : "#1f2937",
+        });
+        if (!resultado.isConfirmed) return;
+        await TareasController.eliminarTodasCompletadas();
+        Render._cerrarSidebarSiAbierto();
+      });
+    }
+
     const contenedorLista = Utils.getElement("task-list");
     if (contenedorLista) {
-      contenedorLista.addEventListener("click", (evento) => {
+      contenedorLista.addEventListener("click", async (evento) => {
         if (evento.target.classList.contains("btn-eliminar")) {
           evento.stopPropagation();
-          TareasController.eliminar(Number(evento.target.dataset.id));
+          await TareasController.eliminar(Number(evento.target.dataset.id));
           return;
         }
         if (evento.target.closest(".btn-gestionar-proyectos")) {
@@ -102,7 +149,7 @@ const Render = {
         }
         const tarjeta = evento.target.closest(".task-card");
         if (tarjeta) {
-          TareasController.alternarHecha(Number(tarjeta.dataset.id));
+          await TareasController.alternarHecha(Number(tarjeta.dataset.id));
         }
       });
     }
@@ -125,11 +172,11 @@ const Render = {
     }
     const navProyectos = Utils.getElement("nav-proyectos");
     if (navProyectos) {
-      navProyectos.addEventListener("click", (evento) => {
+      navProyectos.addEventListener("click", async (evento) => {
         const botonEliminar = evento.target.closest(".btn-eliminar-proyecto");
         if (botonEliminar) {
           evento.stopPropagation();
-          ProyectosController.eliminar(botonEliminar.dataset.proyecto);
+          await ProyectosController.eliminar(botonEliminar.dataset.proyecto);
           return;
         }
         const elementoNav = evento.target.closest(".nav-item");
@@ -219,15 +266,133 @@ const Render = {
   },
 
   /**
+   * Muestra u oculta la barra superior cuando hay peticiones de mutación en curso.
+   * @returns {void}
+   */
+  actualizarBarraActividadRed() {
+    const barra = Utils.getElement("red-bar-actividad");
+    if (!barra) return;
+    const visible = State.peticionesMutacionEnCurso > 0;
+    barra.dataset.visible = visible ? "true" : "false";
+    barra.classList.toggle("opacity-0", !visible);
+    barra.classList.toggle("opacity-100", visible);
+    barra.setAttribute("aria-busy", visible ? "true" : "false");
+  },
+
+  /**
+   * Habilita búsqueda, filtros y “Nueva tarea” solo cuando la lista inicial cargó con éxito.
+   * @returns {void}
+   */
+  actualizarControlesSegunEstadoRed() {
+    const listo = State.estadoRedLista === "exito";
+    const botonNuevaTarea = document.querySelector(".btn-nueva-tarea");
+    if (botonNuevaTarea) {
+      botonNuevaTarea.disabled = !listo;
+      botonNuevaTarea.classList.toggle("opacity-50", !listo);
+      botonNuevaTarea.classList.toggle("cursor-not-allowed", !listo);
+    }
+    const campoBusqueda = Utils.getElement("input-busqueda");
+    if (campoBusqueda) {
+      campoBusqueda.disabled = !listo;
+      campoBusqueda.classList.toggle("opacity-50", !listo);
+      campoBusqueda.classList.toggle("cursor-not-allowed", !listo);
+    }
+    const contenedorFiltrosPrioridad = Utils.getElement("filters");
+    if (contenedorFiltrosPrioridad) {
+      contenedorFiltrosPrioridad.classList.toggle("pointer-events-none", !listo);
+      contenedorFiltrosPrioridad.classList.toggle("opacity-45", !listo);
+    }
+  },
+
+  /**
+   * HTML del estado de carga (spinner + texto accesible).
+   * @returns {string}
+   */
+  _htmlPanelCargaLista() {
+    return `
+      <div class="${this.CLASES_PANEL_CARGA_LISTA}" role="status" aria-live="polite" aria-busy="true">
+        <div class="w-11 h-11 rounded-full border-[3px] border-blue-500 dark:border-blue-400 border-t-transparent animate-spin" aria-hidden="true"></div>
+        <p class="mt-5 font-mono text-sm font-semibold text-blue-900 dark:text-blue-200 text-center">Cargando tareas desde el servidor…</p>
+        <p class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-center max-w-sm leading-relaxed">
+          La petición está en curso (latencia de red y tiempo de respuesta de Node.js).
+        </p>
+      </div>`;
+  },
+
+  /**
+   * HTML del estado de error con distinción visual 4xx / 5xx / red.
+   * @returns {string}
+   */
+  _htmlPanelErrorLista() {
+    const detalle = State.errorRedLista || {
+      mensaje: "No se pudo obtener la lista.",
+      codigoHttp: undefined,
+      esErrorRed: true,
+    };
+    const codigo = detalle.codigoHttp;
+    let clasesBorde = "border-slate-300 dark:border-slate-600";
+    let etiquetaTipo = "Error";
+    if (detalle.esErrorRed && codigo === undefined) {
+      clasesBorde = "border-slate-400 dark:border-slate-500";
+      etiquetaTipo = "Sin conexión";
+    } else if (codigo >= 400 && codigo < 500) {
+      clasesBorde = "border-amber-500 dark:border-amber-400";
+      etiquetaTipo = `Error del cliente (HTTP ${codigo})`;
+    } else if (codigo >= 500) {
+      clasesBorde = "border-red-500 dark:border-red-400";
+      etiquetaTipo = `Error del servidor (HTTP ${codigo})`;
+    } else if (codigo != null) {
+      etiquetaTipo = `HTTP ${codigo}`;
+    }
+
+    const mensajeSeguro = Utils.escapeHtml(detalle.mensaje || "Error desconocido");
+
+    return `
+      <div class="${this.CLASES_PANEL_ERROR_LISTA} ${clasesBorde}" role="alert" aria-live="assertive">
+        <div class="flex items-start gap-3 mb-4">
+          <span class="text-2xl shrink-0" aria-hidden="true">⚠</span>
+          <div class="min-w-0 flex-1">
+            <p class="font-mono text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">${Utils.escapeHtml(etiquetaTipo)}</p>
+            <p class="text-sm font-semibold leading-snug">${mensajeSeguro}</p>
+          </div>
+        </div>
+        <p class="text-xs text-gray-600 dark:text-gray-400 mb-5 font-mono leading-relaxed">
+          Revisa que el servidor esté ejecutándose y que la URL base de la API sea correcta (<code class="bg-gray-200/80 dark:bg-gray-800 px-1 rounded">/api/v1/tasks</code>).
+        </p>
+        <button
+          type="button"
+          id="btn-reintentar-lista-tareas"
+          class="w-full sm:w-auto self-center px-5 py-2.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white font-bold text-sm border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+        >
+          Reintentar conexión
+        </button>
+      </div>`;
+  },
+
+  /**
    * Obtiene las tareas visibles según filtro y búsqueda, pinta la lista en #task-list
-   * (vacío, o grupos Pendientes / Completadas con tarjetas) y actualiza las estadísticas del sidebar.
+   * (carga, error, vacío o grupos Pendientes / Completadas) y actualiza estadísticas.
    * @returns {void}
    */
   renderizarTareas() {
-    const visibles = Filtros.obtenerVisibles();
     const contenedor = Utils.getElement("task-list");
     if (!contenedor) return;
 
+    this.actualizarControlesSegunEstadoRed();
+
+    if (State.estadoRedLista === "cargando") {
+      Utils.setHTML(contenedor, this._htmlPanelCargaLista());
+      Estadisticas.actualizar();
+      return;
+    }
+
+    if (State.estadoRedLista === "error") {
+      Utils.setHTML(contenedor, this._htmlPanelErrorLista());
+      Estadisticas.actualizar();
+      return;
+    }
+
+    const visibles = Filtros.obtenerVisibles();
     Utils.setHTML(
       contenedor,
       !visibles.length

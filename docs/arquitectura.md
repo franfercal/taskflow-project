@@ -17,6 +17,7 @@ Todo el estado vive en el objeto global `State` (en `js/core/state.js`):
 | `filtroActivo` | `string` | Vista/filtro actual: `"todas"`, `"hoy"`, `"semana"`, `"mes"`, `"pendientes"`, `"completadas-vista"`, `"alta"`/`"media"`/`"baja"`, o nombre de proyecto. |
 | `busqueda` | `string` | Texto del buscador; se combina con el filtro para filtrar por título. |
 | `siguienteId` | `number` | Siguiente ID numérico para nuevas tareas (auto-incremento). |
+| `servidorAlcanzable` | `boolean` | Indica si la última petición a la API respondió bien; si al arrancar falla, la lista queda vacía en memoria (sin copia local en el navegador). |
 | `SIN_FECHA` | `string` | Constante `"Sin fecha"` cuando la tarea no tiene fecha límite. |
 
 - `State.proyectosDeTarea(tarea)` devuelve el array de nombres de proyectos de una tarea (soporta legacy `proyecto` string).
@@ -38,9 +39,10 @@ Cada elemento de `State.tareas` tiene esta forma:
 
 ### Persistencia
 
-- **localStorage**: se guardan `taskflow_tareas`, `taskflow_proyectos` y `taskflow_siguiente_id` (ver `Persistencia` en `js/core/storage.js`).
-- El tema (claro/oscuro) se guarda aparte (clase `dark` en `<html>` y clave en localStorage).
-- Hay migración automática de tareas con `proyecto` (string) a `proyectos` (array).
+- **Servidor (API REST)**: las **tareas** se crean, listan, actualizan y eliminan vía `fetch` contra `/api/v1/tasks` (implementación en `js/api/client.js`: `TaskflowApiClient` y alias `ApiTareas`). El backend (Express en `server/`) mantiene los datos en memoria mientras el proceso siga en ejecución.
+- **Proyectos en el cliente**: la lista `State.proyectos` vive solo en memoria en esta sesión; no se persiste en el servidor salvo que se amplíe la API.
+- **Tema**: por defecto **claro**; la elección del usuario se guarda en **localStorage** (`taskflow_tema_preferido`: `claro` u `oscuro`) y se aplica en la siguiente visita (clase `dark` en `<html>`).
+- El cliente puede seguir recibiendo tareas con el campo legacy `proyecto` (string); `State.proyectosDeTarea` normaliza a `proyectos[]`.
 
 ---
 
@@ -48,8 +50,8 @@ Cada elemento de `State.tareas` tiene esta forma:
 
 ### Arranque (`App.init()` en `app.js`)
 
-1. **Cargar datos**: `Persistencia.cargar()` rellena `State.tareas`, `State.proyectos` y `State.siguienteId` desde localStorage.
-2. **Configuración**: se muestra la fecha actual en el header y se aplica el tema guardado (`Tema.init()`).
+1. **Sincronizar con el servidor**: `TareasController.sincronizarConServidorAlInicio()` llama a la API (`ApiTareas.listar()`); si tiene éxito, rellena `State.tareas` y ajusta `siguienteId` y `servidorAlcanzable`. Si falla, deja la lista vacía y `servidorAlcanzable` en `false`.
+2. **Configuración**: se muestra la fecha actual en el header y se inicializa el tema (`Tema.init()`).
 3. **Inicialización de módulos**: `Modal.init()`, `ModalProyectos.init()`, `Navegacion.init()`, `Render.init()`, `Filtros.init()` (registran listeners y preparan UI).
 4. **Primera renderización**: `Render.renderizarFiltros()`, `Render.renderizarProyectosLateral()`, `Render.renderizarTareas()`.
 5. **Toast de bienvenida**: se muestra el número de tareas pendientes (o mensaje de “sin pendientes”) y se oculta a los 3 s o al cerrar.
@@ -58,7 +60,7 @@ Cada elemento de `State.tareas` tiene esta forma:
 
 1. Usuario hace clic en “Nueva tarea” → se abre el modal (`Modal`).
 2. Rellena título, proyectos, prioridad, fecha/hora y guarda.
-3. `TareasController` añade la tarea a `State.tareas`, incrementa `siguienteId`, llama a `Persistencia.guardar()`.
+3. `TareasController` envía la tarea a la API (`crear`), actualiza `State.tareas` y `siguienteId` con la respuesta del servidor.
 4. `Render.renderizarTareas()` (y filtros/proyectos si aplica) actualiza la lista y el sidebar.
 
 Los filtros y la búsqueda no modifican `State.tareas`; solo cambian `State.filtroActivo` y `State.busqueda`. La lista visible se obtiene aplicando `Filtros` (dominio) sobre `State.tareas` y pintando el resultado en `Render`.
@@ -69,15 +71,16 @@ Los filtros y la búsqueda no modifican `State.tareas`; solo cambian `State.filt
 
 El orden en `index.html` respeta dependencias (los módulos usan objetos globales definidos en scripts anteriores):
 
-1. **Flatpickr** (CDN) — selector de fecha.
-2. **Core**: `state.js` → `utils.js` → `storage.js`.
-3. **Dominio**: `filters.js`.
-4. **Controladores**: `task.js` → `project.js`.
-5. **Dominio**: `statistics.js`.
-6. **UI**: `modal-proyectos.js` → `render.js` → `modal.js` → `nav.js` → `theme.js`.
-7. **Entrada**: `app.js`.
+1. **Flatpickr** y **SweetAlert2** (CDN) — fecha y diálogos.
+2. **Core**: `state.js` → `utils.js`.
+3. **Red**: `js/api/client.js` (`TaskflowApiClient`, `ApiTareas`).
+4. **Dominio**: `filters.js`.
+5. **Controladores**: `task.js` → `project.js`.
+6. **Dominio**: `statistics.js`.
+7. **UI**: `modal-proyectos.js` → `render.js` → `modal.js` → `nav.js` → `theme.js`.
+8. **Entrada**: `app.js`.
 
-No hay sistema de módulos ES; todo son scripts en el global, con objetos como `State`, `Utils`, `Persistencia`, `Filtros`, `TareasController`, `ProyectosController`, `Estadisticas`, `Modal`, `ModalProyectos`, `Render`, `Navegacion`, `Tema`.
+No hay sistema de módulos ES; todo son scripts en el global, con objetos como `State`, `Utils`, `ApiTareas`, `TaskflowApiClient`, `Filtros`, `TareasController`, `ProyectosController`, `Estadisticas`, `Modal`, `ModalProyectos`, `Render`, `Navegacion`, `Tema`.
 
 ---
 

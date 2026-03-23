@@ -1,8 +1,3 @@
-/**
- * Modal para crear una nueva tarea: formulario con título, proyecto, prioridad, fecha y hora.
- * Incluye selector de fecha (flatpickr), reloj circular para la hora y opción "Nuevo proyecto".
- */
-
 const Modal = {
   /** Longitud máxima del título de la tarea (coincide con maxlength del input). */
   MAX_TITULO: 80,
@@ -476,7 +471,7 @@ const Modal = {
    * Si hay errores, los muestra, pone foco en el primer campo inválido y no cierra.
    * @returns {void}
    */
-  guardar() {
+  async guardar() {
     this._limpiarErrores();
     const { valido, errores } = this._validarFormulario();
     if (!valido) {
@@ -490,7 +485,7 @@ const Modal = {
       return;
     }
     const { titulo, prioridad, fecha } = this._leerValoresFormulario();
-    if (TareasController.agregar(titulo, this.proyectosSeleccionados, prioridad, fecha)) this.cerrar();
+    if (await TareasController.agregar(titulo, this.proyectosSeleccionados, prioridad, fecha)) this.cerrar();
   },
 
   /**

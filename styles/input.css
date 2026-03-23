@@ -60,6 +60,20 @@
   animation: subirAparecer 0.25s ease both;
 }
 
+/* Barra superior de “petición en curso” (mutaciones hacia Node) */
+@keyframes red-bar-slide {
+  0% {
+    transform: translateX(-60%);
+  }
+  100% {
+    transform: translateX(160%);
+  }
+}
+
+.red-bar-actividad-indeterminate {
+  animation: red-bar-slide 1.15s ease-in-out infinite;
+}
+
 /* Entrada escalonada de tarjetas de tarea */
 .task-card {
   animation: subirAparecer 0.35s ease both;
@@ -71,7 +85,11 @@
 .task-card:nth-child(4) { animation-delay: 200ms; }
 .task-card:nth-child(5) { animation-delay: 250ms; }
 
-/* Sidebar móvil: colapsado por defecto, se expande con .open */
+/*
+ * Sidebar móvil: colapsado por defecto; con .open es un panel fijo alineado al borde
+ * izquierdo de la pantalla con margen (1rem), no a ancho completo, para coherencia
+ * con el menú “a la izquierda” del layout de escritorio.
+ */
 @media (max-width: 767px) {
   aside#sidebar {
     max-height: 0;
@@ -81,13 +99,24 @@
   aside#sidebar.open {
     position: fixed;
     top: 3.75rem;
-    left: 0;
-    right: 0;
-    max-height: calc(100dvh - 3.75rem);
+    /* Cajón alineado al borde izquierdo con margen; ancho acotado (no ocupa toda la pantalla). */
+    left: 1rem;
+    right: auto;
+    width: min(20rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 3.75rem - 0.5rem);
     overflow-y: auto;
     z-index: 99;
-    border-radius: 0;
+    border-radius: 0.5rem;
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.12),
+      0 4px 6px -4px rgb(0 0 0 / 0.08);
   }
+}
+
+.dark aside#sidebar.open {
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.35),
+    0 4px 6px -4px rgb(0 0 0 / 0.25);
 }
 
 /* Toast de bienvenida visible: muestra overlay y escala el cuadro al 100% */

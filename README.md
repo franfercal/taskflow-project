@@ -1,7 +1,6 @@
 # TaskFlow
 
-Aplicación web para **gestionar tareas y proyectos**: prioridades, fechas límite, filtros por vista y por proyecto, y persistencia en el navegador.
-
+Aplicación web para **gestionar tareas y proyectos**: prioridades, fechas límite, filtros por vista y por proyecto; las **tareas** persisten en el **servidor** (API).
 ---
 
 ## Características
@@ -10,8 +9,8 @@ Aplicación web para **gestionar tareas y proyectos**: prioridades, fechas lími
 - **Proyectos**: organizar tareas en varios proyectos; una tarea puede pertenecer a varios. Crear y eliminar proyectos desde el sidebar o al crear una tarea.
 - **Vistas y filtros**: Todas, Hoy, Esta semana, Este mes, Sin completar, Completadas; filtro por prioridad (chips) y por proyecto; búsqueda por texto en el título.
 - **Fecha y hora**: selector de fecha (Flatpickr) y reloj para la hora; cada tarjeta muestra días/horas restantes hasta la fecha límite (o "Vencida" si ya pasó).
-- **Interfaz**: tema claro/oscuro (guardado en localStorage), diseño responsive con sidebar colapsable en móvil, validación de formularios con mensajes de error.
-- **Persistencia**: todo se guarda en **localStorage** (tareas, proyectos, tema, siguiente ID).
+- **Interfaz**: tema claro por defecto; claro/oscuro con preferencia guardada en el navegador (`localStorage`), diseño responsive con sidebar colapsable en móvil, validación de formularios con mensajes de error.
+- **Red**: capa `js/api/client.js` (`TaskflowApiClient` / `ApiTareas`) hacia `/api/v1/tasks`. Arranca el backend en `server/` para usar la app.
 
 ---
 
@@ -33,17 +32,17 @@ taskflow-project/
 │   ├── input.css       # Fuente de Tailwind
 │   └── output.css      # CSS generado (no editar a mano)
 ├── js/
-│   ├── core/           # Estado, utilidades, persistencia
+│   ├── api/            # Cliente HTTP (client.js)
+│   ├── core/           # Estado y utilidades
 │   ├── dominio/        # Filtros y estadísticas
 │   ├── controladores/  # Lógica de tareas y proyectos
 │   └── ui/             # Renderizado, modales, navegación, tema
+├── server/             # Express: API + estáticos (opcional en tu despliegue)
 ├── tests/              # Tests E2E (Playwright)
 └── docs/               # Documentación y referencias
 ```
 
 Detalle de módulos y responsabilidades: **[js/README.md](js/README.md)**.
-
----
 
 ## Cómo empezar
 
@@ -68,65 +67,15 @@ pnpm run serve
 
 Abre **http://localhost:3000** y ya puedes crear tareas, proyectos y usar los filtros.
 
----
+## API REST y Swagger
 
-### Ejemplo 2: Desarrollo con estilos en vivo
+Con el servidor en marcha (`cd server && pnpm dev`):
 
-Si vas a tocar CSS (Tailwind en `styles/input.css`), deja Tailwind en modo watch en una terminal y el servidor en otra:
-
-**Terminal 1** — recompila CSS al guardar:
-
-```bash
-pnpm run dev
-```
-
-**Terminal 2** — sirve la app:
-
-```bash
-pnpm run serve
-```
-
-Cualquier cambio en `input.css` se refleja al recargar la página en http://localhost:3000.
-
----
-
-### Ejemplo 3: Comprobar que todo funciona (tests E2E)
-
-Antes de hacer commit o tras cambiar lógica de tareas/proyectos/modales:
-
-```bash
-pnpm exec playwright install chromium   # solo la primera vez
-pnpm run test:e2e
-```
-
-Si algo falla, puedes depurar con el navegador visible o con la UI de Playwright:
-
-```bash
-pnpm run test:e2e:headed
-# o
-pnpm run test:e2e:ui
-```
-
-Para ver el último reporte HTML de Playwright:
-
-```bash
-pnpm exec playwright show-report
-```
-
----
-
-### Ejemplo 4: Usar npm en lugar de pnpm
-
-Si prefieres npm, los mismos pasos con `npm run` y `npx`:
-
-```bash
-npm install
-npm run build
-npm run serve
-npm run test:e2e
-npx playwright install chromium
-npx playwright show-report
-```
+- **Swagger UI (documentación interactiva):** `http://127.0.0.1:PUERTO/api-docs`
+- **OpenAPI JSON:** `/openapi.json` · **YAML:** `/openapi.yaml`
+- **Guía Swagger en `docs/`:** **[docs/api-swagger.md](docs/api-swagger.md)** (URLs, OpenAPI, “Try it out”).
+- **Guía con ejemplos HTTPie** (request/response, errores 400/404/500): **[server/README.md](server/README.md)**
+- **Arquitectura ampliada del monorepo:** **[README2.md](README2.md)**
 
 ---
 
@@ -139,19 +88,6 @@ En la carpeta **[docs/](docs/)** tienes la documentación ampliada:
 - **[docs/guia-usuario.md](docs/guia-usuario.md)** — Cómo usar la aplicación (tareas, proyectos, filtros, tema).
 - **[docs/desarrollo.md](docs/desarrollo.md)** — Convenciones de código y guía para contribuir.
 - **[docs/testing.md](docs/testing.md)** — Tests E2E con Playwright.
-
----
-
-## Documentación y referencias externas
-
-- **HTML / estructura**: [MDN – Estructuración de contenido](https://developer.mozilla.org/es/docs/Learn_web_development/Core/Structuring_content)
-- **JavaScript**: [JavaScript.info](https://es.javascript.info/), [MDN JavaScript](https://developer.mozilla.org/es/docs/Web/JavaScript)
-- **localStorage**: [MDN Window.localStorage](https://developer.mozilla.org/es/docs/Web/API/Window/localStorage)
-- **Flatpickr**: [Documentación oficial](https://flatpickr.js.org/getting-started/)
-- **Tailwind CSS**: [Documentación](https://tailwindcss.com/docs)
-- **Playwright**: [Documentación](https://playwright.dev/docs/intro)
-
----
 
 ## Autor
 

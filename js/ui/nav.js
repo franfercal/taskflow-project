@@ -1,8 +1,3 @@
-/**
- * Navegación del sidebar y menú móvil: clic en vistas (nav-item) cambia filtro y cierra sidebar;
- * botón hamburguesa abre/cierra el panel; clic fuera cierra el sidebar en móvil.
- */
-
 const Navegacion = {
   /**
    * Configura los listeners del sidebar: clic en vistas (nav-item) cambia filtro y cierra sidebar;

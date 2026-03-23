@@ -2,13 +2,18 @@
 
 Organización en subcarpetas. El orden de carga en `index.html` respeta las dependencias.
 
-## `core/` — Núcleo (estado, utilidades, persistencia)
+## `core/` — Núcleo (estado y utilidades)
 
 | Archivo        | Responsabilidad |
 |----------------|-----------------|
-| `state.js`     | Estado global: tareas, proyectos, filtro activo, búsqueda, siguienteId. Objeto `State`. |
+| `state.js`     | Estado global: tareas, proyectos, filtro activo, búsqueda, siguienteId, servidorAlcanzable. Objeto `State`. |
 | `utils.js`     | Utilidades: DOM, fechas, clases CSS, escape HTML, debounce, focus trap. Objeto `Utils`. |
-| `storage.js`   | Persistencia en localStorage (guardar/cargar). Objeto `Persistencia`. |
+
+## `api/` — Capa de red
+
+| Archivo     | Responsabilidad |
+|-------------|-----------------|
+| `client.js` | Peticiones **asíncronas** con **`fetch`**: `peticionHttpJson`, `TaskflowApiClient`, alias `ApiTareas` y funciones `fetchListarTareas`, etc. URL por defecto `http://localhost:3000/api/v1/tasks` si abres `index.html` como archivo; con el servidor Express se usa el mismo origen. Opcional: `<meta name="taskflow-api-tasks-base" content="...">`. |
 
 ## `dominio/` — Filtros y estadísticas
 
@@ -21,7 +26,7 @@ Organización en subcarpetas. El orden de carga en `index.html` respeta las depe
 
 | Archivo     | Responsabilidad |
 |-------------|-----------------|
-| `task.js`   | CRUD de tareas: agregar, alternar hecha, eliminar, proyectos de una tarea. Objeto `TareasController`. |
+| `task.js`   | CRUD de tareas vía API: agregar, alternar hecha, eliminar, proyectos de una tarea. Objeto `TareasController`. |
 | `project.js`| Crear/eliminar proyectos y contar pendientes por proyecto. Objeto `ProyectosController`. |
 
 ## `ui/` — Interfaz y modales
@@ -32,13 +37,13 @@ Organización en subcarpetas. El orden de carga en `index.html` respeta las depe
 | `modal.js`          | Modal nueva tarea: formulario, flatpickr, reloj, proyectos seleccionados. Objeto `Modal`. |
 | `modal-proyectos.js`| Modal para gestionar proyectos de una tarea. Objeto `ModalProyectos`. |
 | `nav.js`            | Sidebar y menú móvil (vistas, abrir/cerrar). Objeto `Navegacion`. |
-| `theme.js`          | Tema claro/oscuro (clase .dark, localStorage). Objeto `Tema`. |
+| `theme.js`          | Tema claro por defecto; clase `.dark` en `<html>`. Preferencia en `localStorage` (`taskflow_tema_preferido`). Objeto `Tema`. |
 
 ## Entrada
 
 | Archivo  | Responsabilidad |
 |----------|-----------------|
-| `../app.js` | Punto de entrada: `App.init()` orquesta carga, inicialización y primera renderización. |
+| `../app.js` | Punto de entrada: `App.init()` orquesta sincronización con la API, inicialización y primera renderización. |
 
 ---
 

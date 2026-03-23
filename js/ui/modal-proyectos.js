@@ -1,8 +1,3 @@
-/**
- * Modal para gestionar los proyectos de una tarea ya creada: añadir y quitar proyectos.
- * Se abre desde el botón "Gestionar proyectos" (⊕) en cada tarjeta de tarea.
- */
-
 const ModalProyectos = {
   /** id de la tarea que se está editando (null cuando el modal está cerrado). */
   idTarea: null,
@@ -140,24 +135,28 @@ const ModalProyectos = {
       });
     }
 
-    Utils.getElement("btn-anadir-proyecto-tarea")?.addEventListener("click", () => {
+    Utils.getElement("btn-anadir-proyecto-tarea")?.addEventListener("click", async () => {
       const select = Utils.getElement("modal-proyectos-select");
       const nombre = select?.value?.trim();
       if (!nombre || this.idTarea == null) return;
-      TareasController.añadirAProyecto(this.idTarea, nombre);
-      this.actualizarContenido();
-      Modal.sincronizarSelectProyecto();
+      const ok = await TareasController.añadirAProyecto(this.idTarea, nombre);
+      if (ok) {
+        this.actualizarContenido();
+        Modal.sincronizarSelectProyecto();
+      }
     });
 
     // Delegación: clic en "quitar" de un chip
-    Utils.getElement("modal-proyectos-chips")?.addEventListener("click", (evento) => {
+    Utils.getElement("modal-proyectos-chips")?.addEventListener("click", async (evento) => {
       const botonQuitar = evento.target.closest(".btn-quitar-proyecto");
       if (!botonQuitar || this.idTarea == null) return;
       const nombreProyecto = botonQuitar.dataset.proyecto;
       if (nombreProyecto) {
-        TareasController.quitarDeProyecto(this.idTarea, nombreProyecto);
-        this.actualizarContenido();
-        Modal.sincronizarSelectProyecto();
+        const ok = await TareasController.quitarDeProyecto(this.idTarea, nombreProyecto);
+        if (ok) {
+          this.actualizarContenido();
+          Modal.sincronizarSelectProyecto();
+        }
       }
     });
   },

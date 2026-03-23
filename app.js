@@ -6,17 +6,15 @@
 const App = {
   /**
    * Inicializa la aplicación completa:
-   * 1. Carga datos desde localStorage
+   * 1. Sincroniza tareas con el servidor (única fuente persistente)
    * 2. Configura fecha actual y tema (claro/oscuro)
    * 3. Inicializa modal, navegación, render y filtros
    * 4. Pinta filtros, proyectos y tareas
    * 5. Muestra el toast de bienvenida
-   * @returns {void}
+   * @returns {Promise<void>}
    */
-  init() {
+  async init() {
     try {
-      Persistencia.cargar();
-
       this.configurarFecha();
       Tema.init();
 
@@ -26,9 +24,20 @@ const App = {
       Render.init();
       Filtros.init();
 
+      // Estado inicial: la lista está “en tránsito” hasta que Node responda (latencia real).
+      State.estadoRedLista = "cargando";
+      State.errorRedLista = null;
       Render.renderizarFiltros();
       Render.renderizarProyectosLateral();
       Render.renderizarTareas();
+      Estadisticas.actualizar();
+
+      await TareasController.sincronizarConServidorAlInicio();
+
+      Render.renderizarFiltros();
+      Render.renderizarProyectosLateral();
+      Render.renderizarTareas();
+      Estadisticas.actualizar();
 
       this.mostrarBienvenida();
     } catch (error) {
@@ -73,7 +82,7 @@ const App = {
   },
 };
 
-// Arranque: cuando el DOM está listo se ejecuta App.init()
+// Arranque: cuando el DOM está listo se ejecuta App.init() (async: sincroniza con la API antes de pintar).
 document.addEventListener("DOMContentLoaded", () => {
-  App.init();
+  App.init().catch((error) => console.error("Fallo en App.init", error));
 });

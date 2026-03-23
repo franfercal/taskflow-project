@@ -1,8 +1,3 @@
-/**
- * Lógica de filtrado: por prioridad, por fecha (hoy/semana/mes), por proyecto, por estado y por texto de búsqueda.
- * También actualiza la UI de chips y elementos de navegación para marcar el filtro activo.
- */
-
 const Filtros = {
   /**
    * Devuelve la fecha de hoy en formato ISO (YYYY-MM-DD). Centraliza el cálculo para filtros por fecha.

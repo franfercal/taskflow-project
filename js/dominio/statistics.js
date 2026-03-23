@@ -1,14 +1,10 @@
-/**
- * Actualiza todos los contadores del sidebar (Vistas, Progreso) y el subtítulo de la sección "Mis Tareas".
- * Se invoca tras cada renderizado de la lista de tareas.
- */
-
 const Estadisticas = {
   /**
    * Recalcula y escribe en el DOM:
    * - est-completadas / est-pendientes (Progreso)
    * - cnt-todas, cnt-hoy, cnt-semana, cnt-mes, cnt-pendientes, cnt-completadas (Vistas)
    * - subtitle-pendientes (ej. "jueves, 12 de marzo · 3 pendientes")
+   * - btn-limpiar-completadas: disabled si no hay tareas completadas
    * @returns {void}
    */
   actualizar() {
@@ -28,7 +24,33 @@ const Estadisticas = {
 
     const fechaFormateada = Utils.formatearFecha({ weekday: "long", day: "numeric", month: "long" });
     const plural = Utils.plural(pendientes);
-    this.set("subtitle-pendientes", `${fechaFormateada} · ${pendientes} pendiente${plural}`);
+
+    // Subtítulo según fase de red: carga inicial, error al listar o vista normal.
+    if (State.estadoRedLista === "cargando") {
+      this.set("subtitle-pendientes", `${fechaFormateada} · Sincronizando con el servidor…`);
+    } else if (State.estadoRedLista === "error") {
+      const detalle = State.errorRedLista;
+      const codigo = detalle?.codigoHttp;
+      let mensajeSubtitulo = "No se pudieron cargar las tareas.";
+      if (detalle?.esErrorRed) {
+        mensajeSubtitulo = "Sin conexión con el servidor. Comprueba que Node esté en marcha.";
+      } else if (codigo >= 400 && codigo < 500) {
+        mensajeSubtitulo = `Error del cliente (${codigo}). Revisa la petición o los datos enviados.`;
+      } else if (codigo >= 500) {
+        mensajeSubtitulo = `Error del servidor (${codigo}). Intenta de nuevo más tarde.`;
+      } else if (detalle?.mensaje) {
+        mensajeSubtitulo = detalle.mensaje;
+      }
+      this.set("subtitle-pendientes", `${fechaFormateada} · ${mensajeSubtitulo}`);
+    } else {
+      this.set("subtitle-pendientes", `${fechaFormateada} · ${pendientes} pendiente${plural}`);
+    }
+
+    // Habilitar "Limpiar completadas" solo si hay al menos una tarea hecha (evita clics vacíos).
+    const botonLimpiarCompletadas = Utils.getElement("btn-limpiar-completadas");
+    if (botonLimpiarCompletadas) {
+      botonLimpiarCompletadas.disabled = completadas === 0 || State.estadoRedLista !== "exito";
+    }
   },
 
   /**

@@ -1,6 +1,6 @@
 /**
- * Estado global de la aplicación (single source of truth).
- * Aquí viven listas de proyectos/tareas, filtro activo, texto de búsqueda y el contador de IDs.
+ * Estado global de la aplicación
+ * listas de proyectos/tareas, filtro activo, texto de búsqueda y el contador de IDs.
  */
 
 const State = {
@@ -31,10 +31,17 @@ const State = {
   siguienteId: 1,
 
   /**
-   * Indica si ya existe un proyecto con el nombre dado.
-   * @param {string} nombre - Nombre del proyecto
-   * @returns {boolean}
+   * true si la última petición a la API tuvo éxito.
+   * Si false al iniciar, la lista de tareas quedó vacía (sin respaldo en disco en el cliente).
    */
+  servidorAlcanzable: false,
+
+  estadoRedLista: "cargando",
+
+  errorRedLista: null,
+
+  peticionesMutacionEnCurso: 0,
+
   existeProyecto(nombre) {
     return this.proyectos.includes(nombre);
   },

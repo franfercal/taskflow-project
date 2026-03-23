@@ -1,37 +1,36 @@
-# Testing con el navegador (Playwright)
+# Testing — TaskFlow
 
-Los tests E2E se ejecutan en un navegador real (Chromium, Firefox) con [Playwright](https://playwright.dev/).
+## Prueba manual (recomendada)
 
-## Requisitos
+La aplicación espera el **backend** que sirve la API y los estáticos:
 
-- Node.js y pnpm (o npm)
-- Tras instalar dependencias, instalar los navegadores de Playwright (solo la primera vez):
+1. En la raíz del repo: `pnpm run build` (CSS de Tailwind).
+2. En `server/`: `pnpm install` si hace falta, luego `pnpm dev`.
+3. Abre en el navegador la URL base (por defecto `http://127.0.0.1:3000/`).
+
+Sin servidor activo, la lista de tareas puede quedar vacía y las operaciones fallarán.
+
+---
+
+## Playwright (opcional)
+
+Si el proyecto incluye [Playwright](https://playwright.dev/) como dependencia, puedes añadir de nuevo `playwright.config.js`, scripts en `package.json` (por ejemplo `test:e2e`) y specs bajo `tests/`.
+
+**Requisitos habituales**
+
+- Node.js y pnpm
+- Navegadores de Playwright (solo la primera vez):
 
 ```bash
 pnpm exec playwright install chromium
-# Opcional: pnpm exec playwright install   # instala Chromium, Firefox y WebKit
 ```
 
-## Comandos
+**Comandos típicos** (solo aplican si los defines en `package.json`)
 
 | Comando | Descripción |
 |--------|-------------|
-| `pnpm test:e2e` | Ejecuta todos los tests E2E (arranca servidor estático en el puerto 3000) |
-| `pnpm test:e2e:ui` | Abre la interfaz de Playwright para ver y depurar tests |
-| `pnpm test:e2e:headed` | Ejecuta los tests con el navegador visible |
-| `pnpm serve` | Sirve la app en http://localhost:3000 (útil para probar a mano) |
+| `pnpm test:e2e` | Ejecutar suite E2E |
+| `pnpm test:e2e:ui` | Interfaz de depuración de Playwright |
+| `pnpm test:e2e:headed` | Navegador visible |
 
-## Qué cubren los tests
-
-- Carga de la página y título "Gestión de Tareas"
-- Header con TaskFlow y botón "Nueva tarea"
-- Apertura del modal al hacer clic en "Nueva tarea"
-- Presencia del campo título y del select de proyectos
-- Cierre del modal con "Cancelar"
-- Validación: no se puede guardar sin título (mensaje de error)
-- Creación de una tarea con título y proyecto, y comprobación de que aparece en la lista
-- Lista de tareas y sidebar con secciones Vistas y Proyectos
-
-Los tests están en `tests/taskflow.spec.js`.
-
-Se puede abrir el index.html del reporte ejecutando: "pnpm exec playwright show-report"
+Los escenarios suelen cubrir carga de página, modal de nueva tarea, validación de título obligatorio y aparición de tareas en la lista. Tras una ejecución, el reporte HTML se abre con `pnpm exec playwright show-report`.

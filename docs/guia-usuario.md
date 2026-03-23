@@ -6,9 +6,9 @@ Cómo usar la aplicación para gestionar tareas y proyectos desde el navegador.
 
 ## Primer uso
 
-1. Abre la aplicación en el navegador (por ejemplo `http://localhost:3000` si la sirves con `pnpm run serve`).
-2. La primera vez no hay tareas; puedes crear proyectos desde el sidebar o al crear una tarea.
-3. Los datos se guardan automáticamente en tu navegador (localStorage); no hace falta cuenta ni servidor.
+1. Abre la aplicación en el navegador. Con el backend incluido suele ser `http://127.0.0.1:3000/` tras ejecutar el servidor en la carpeta `server/` (consulta el README del proyecto para el comando exacto).
+2. La primera vez la lista puede estar vacía; puedes crear proyectos desde el sidebar o al crear una tarea.
+3. Las **tareas** se guardan en el **servidor** (API); hace falta que el servidor esté en marcha. No se usan cuentas de usuario en esta versión.
 
 ---
 
@@ -57,8 +57,8 @@ En el **área principal**:
 
 ## Tema claro / oscuro
 
-- En la cabecera hay un botón (sol/luna) para **cambiar entre tema claro y oscuro**.
-- La preferencia se guarda en el navegador y se mantiene en la próxima visita.
+- Por defecto la aplicación usa **tema claro** la primera vez (o si no hay preferencia guardada).
+- En la cabecera hay un botón (sol/luna) para **cambiar entre claro y oscuro**; la elección se guarda en el navegador (**localStorage**) y se aplica en la próxima visita.
 
 ---
 
@@ -79,5 +79,6 @@ En el **área principal**:
 
 ## Datos y privacidad
 
-- Todo se guarda **solo en tu navegador** (localStorage). No se envían datos a ningún servidor.
-- Si borras los datos del sitio o usas otro navegador/dispositivo, no verás las mismas tareas a menos que la app ofrezca exportar/importar en el futuro.
+- Las **tareas** se envían al **servidor** que tengas desplegado (misma máquina en desarrollo). No está pensado como almacenamiento anónimo en la nube pública sin tu control del backend.
+- Si el servidor se reinicia, la demo en memoria puede **perder las tareas** salvo que configures persistencia en el servidor.
+- Los **proyectos** que solo existen en la interfaz pueden no coincidir con lo guardado en el servidor si no hay sincronización de proyectos en la API.
