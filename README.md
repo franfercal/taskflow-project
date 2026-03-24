@@ -66,11 +66,12 @@ Con el servidor corriendo (`cd server && pnpm dev`) tienes disponible:
 
 Todo está en la carpeta [docs/](docs/):
 
-- [docs/README.md](docs/README.md) — Índice general
-- [docs/arquitectura.md](docs/arquitectura.md) — Modelo de datos y flujo de la app
-- [docs/guia-usuario.md](docs/guia-usuario.md) — Cómo usar la aplicación
-- [docs/desarrollo.md](docs/desarrollo.md) — Convenciones y guía para contribuir
-- [docs/testing.md](docs/testing.md) — Tests E2E con Playwright
+- [docs/README.md](docs/README.md) — Índice general.
+- [docs/desarrollo.md](docs/desarrollo.md) — Convenciones y guía para contribuir.
+- [docs/api-swagger.md](docs/api-swagger.md) — API REST y Swagger.
+- [docs/testing.md](docs/testing.md) — Tests E2E con Playwright.
+- [server/README.md](server/README.md) — Documentación del servidor.
+- [server/PRUEBAS_API](server/PRUEBAS_API.md) — Pruebas y documentación de la API.
 
 ## Autor
 
