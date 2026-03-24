@@ -343,12 +343,12 @@ const Modal = {
    * @returns {{ valido: boolean, errores: { titulo?: string, proyectos?: string } }}
    */
   _validarFormulario() {
+    // Misma fuente de verdad que al guardar: `_leerValoresFormulario` ya aplica trim al título.
     const { titulo } = this._leerValoresFormulario();
     const errores = {};
-    const tituloLimpio = (this.elementos.titulo?.value ?? "").trim();
-    if (!tituloLimpio) {
+    if (!titulo) {
       errores.titulo = "El título es obligatorio.";
-    } else if (tituloLimpio.length > this.MAX_TITULO) {
+    } else if (titulo.length > this.MAX_TITULO) {
       errores.titulo = `Máximo ${this.MAX_TITULO} caracteres.`;
     }
     if (this.proyectosSeleccionados.length === 0) {

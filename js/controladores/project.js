@@ -34,15 +34,24 @@ const ProyectosController = {
       if (Array.isArray(tarea.proyectos)) {
         const indiceProyecto = tarea.proyectos.indexOf(nombre);
         if (indiceProyecto !== -1) tarea.proyectos.splice(indiceProyecto, 1);
+      } else if (tarea.proyecto === nombre) {
+        // Formato antiguo (`proyecto` string): alinear memoria con el borrado lateral.
+        delete tarea.proyecto;
       }
     });
     if (State.filtroActivo === nombre) State.filtroActivo = "todas";
 
     try {
       await TareasController.conIndicadorMutacion(() =>
-        Promise.all(State.tareas.map((tarea) => ApiTareas.actualizar(tarea.id, { proyectos: [...tarea.proyectos] })))
+        Promise.all(
+          State.tareas.map((tarea) =>
+            ApiTareas.actualizar(tarea.id, {
+              // `proyectosDeTarea` cubre array y legacy; nunca hacer spread de `undefined`.
+              proyectos: State.proyectosDeTarea(tarea).filter((nombreProyecto) => nombreProyecto !== nombre),
+            })
+          )
+        )
       );
-      State.servidorAlcanzable = true;
     } catch (error) {
       console.error(error);
       if (typeof Swal !== "undefined") {

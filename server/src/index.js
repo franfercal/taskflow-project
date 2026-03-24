@@ -22,10 +22,19 @@ function cargarDocumentoOpenapi() {
   try {
     const textoYaml = fs.readFileSync(rutaArchivoOpenapi, "utf8");
     const documento = YAML.parse(textoYaml);
+    /** URL pública del API para Swagger (Vercel expone VERCEL_URL en preview/producción). */
+    const urlBaseServidor =
+      process.env.VERCEL_URL != null && String(process.env.VERCEL_URL).trim() !== ""
+        ? `https://${String(process.env.VERCEL_URL).replace(/^https?:\/\//, "")}`
+        : `http://127.0.0.1:${numeroPuerto}`;
+    const descripcionServidor =
+      process.env.VERCEL_URL != null && String(process.env.VERCEL_URL).trim() !== ""
+        ? "Despliegue Vercel (variable VERCEL_URL)"
+        : "Instancia local (variable PORT en server/.env)";
     documento.servers = [
       {
-        url: `http://127.0.0.1:${numeroPuerto}`,
-        description: "Instancia local (variable PORT en server/.env)",
+        url: urlBaseServidor,
+        description: descripcionServidor,
       },
     ];
     return documento;

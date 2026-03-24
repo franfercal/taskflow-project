@@ -1,6 +1,6 @@
 /**
- * Estado global de la aplicación
- * listas de proyectos/tareas, filtro activo, texto de búsqueda y el contador de IDs.
+ * Estado global de la aplicación:
+ * proyectos, tareas, filtro activo, texto de búsqueda y estado de la carga vía red.
  */
 
 const State = {
@@ -27,14 +27,6 @@ const State = {
   filtroActivo: "todas",
   /** Texto del buscador; se aplica además del filtro para filtrar por título. */
   busqueda: "",
-  /** Siguiente id numérico a asignar a una nueva tarea (auto-incremento). */
-  siguienteId: 1,
-
-  /**
-   * true si la última petición a la API tuvo éxito.
-   * Si false al iniciar, la lista de tareas quedó vacía (sin respaldo en disco en el cliente).
-   */
-  servidorAlcanzable: false,
 
   estadoRedLista: "cargando",
 

@@ -70,20 +70,16 @@ const TareasController = {
         throw Object.assign(new Error("La API no devolvió una lista de tareas"), { status: 400 });
       }
       State.tareas = lista;
-      State.siguienteId = lista.length === 0 ? 1 : Math.max(...lista.map((t) => t.id)) + 1;
       const nombresProyecto = new Set(State.proyectos);
       lista.forEach((tarea) => {
         State.proyectosDeTarea(tarea).forEach((nombre) => nombresProyecto.add(nombre));
       });
       State.proyectos = [...nombresProyecto];
-      State.servidorAlcanzable = true;
       State.estadoRedLista = "exito";
       State.errorRedLista = null;
     } catch (error) {
       console.warn("TaskFlow: API no disponible al iniciar.", error);
       State.tareas = [];
-      State.siguienteId = 1;
-      State.servidorAlcanzable = false;
       const codigoHttp = typeof error?.status === "number" ? error.status : undefined;
       State.estadoRedLista = "error";
       State.errorRedLista = {
@@ -146,9 +142,7 @@ const TareasController = {
     try {
       const creada = await this._conIndicadorMutacion(() => ApiTareas.crear(cuerpo));
       State.tareas.unshift(creada);
-      State.siguienteId = Math.max(State.siguienteId, creada.id + 1);
       this.actualizarUI();
-      State.servidorAlcanzable = true;
       return true;
     } catch (error) {
       this._notificarErrorRed(error, "No se pudo crear la tarea");
@@ -173,7 +167,6 @@ const TareasController = {
       await this._conIndicadorMutacion(() => ApiTareas.actualizar(id, { proyectos: nuevosProyectos }));
       tarea.proyectos.push(nombre);
       this.actualizarUI();
-      State.servidorAlcanzable = true;
       return true;
     } catch (error) {
       this._notificarErrorRed(error, "No se pudo actualizar la tarea");
@@ -197,7 +190,6 @@ const TareasController = {
       await this._conIndicadorMutacion(() => ApiTareas.actualizar(id, { proyectos: nuevosProyectos }));
       tarea.proyectos.splice(indice, 1);
       this.actualizarUI();
-      State.servidorAlcanzable = true;
       return true;
     } catch (error) {
       this._notificarErrorRed(error, "No se pudo actualizar la tarea");
@@ -218,7 +210,6 @@ const TareasController = {
       await this._conIndicadorMutacion(() => ApiTareas.actualizar(id, { hecha: nuevoValor }));
       tarea.hecha = nuevoValor;
       this.actualizarUI();
-      State.servidorAlcanzable = true;
     } catch (error) {
       this._notificarErrorRed(error, "No se pudo actualizar la tarea");
     }
@@ -234,7 +225,6 @@ const TareasController = {
       await this._conIndicadorMutacion(() => ApiTareas.eliminar(id));
       State.tareas = State.tareas.filter((tarea) => tarea.id !== id);
       this.actualizarUI();
-      State.servidorAlcanzable = true;
     } catch (error) {
       this._notificarErrorRed(error, "No se pudo eliminar la tarea");
     }
@@ -250,7 +240,6 @@ const TareasController = {
       const cantidad = typeof resultado?.eliminadas === "number" ? resultado.eliminadas : 0;
       State.tareas = State.tareas.filter((tarea) => !tarea.hecha);
       this.actualizarUI();
-      State.servidorAlcanzable = true;
       return cantidad;
     } catch (error) {
       this._notificarErrorRed(error, "No se pudieron eliminar las tareas completadas");

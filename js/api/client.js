@@ -16,10 +16,6 @@ function resolverUrlBaseApiTareas() {
 /**
  * Ejecuta una petición HTTP con fetch, espera el cuerpo como texto y parsea JSON si aplica.
  * Lanza Error con propiedad .status si la respuesta no es OK.
- *
- * @param {string} urlCompleta - URL absoluta del endpoint
- * @param {RequestInit} opcionesFetch - method, body, headers, etc.
- * @returns {Promise<*>}
  */
 async function peticionHttpJson(urlCompleta, opcionesFetch = {}) {
   const cabeceras = { ...opcionesFetch.headers };
@@ -62,7 +58,6 @@ async function peticionHttpJson(urlCompleta, opcionesFetch = {}) {
 
 /**
  * Construye la URL del recurso tareas + sufijo (ej. "/1", "/completed").
- * @param {string} sufijo - "" o ruta relativa al recurso (con barra inicial)
  */
 function urlTareas(sufijo) {
   const base = resolverUrlBaseApiTareas();
@@ -70,8 +65,6 @@ function urlTareas(sufijo) {
 }
 
 const TaskflowApiClient = {
-  urlBaseTareas: () => resolverUrlBaseApiTareas(),
-
   /**
    * GET /api/v1/tasks — lista todas las tareas.
    * @returns {Promise<Object[]>}
@@ -104,7 +97,7 @@ const TaskflowApiClient = {
   /**
    * PATCH /api/v1/tasks/:id
    * @param {number} idTarea
-   * @param {Object} parches - Campos parciales (hecha, titulo, etc.)
+   * @param {Object} parches - Campos parciales (hecha, titulo...)
    * @returns {Promise<Object>}
    */
   async actualizarTarea(idTarea, parches) {
@@ -127,7 +120,6 @@ const TaskflowApiClient = {
  * Alias con nombres cortos para controladores (`TareasController`, etc.).
  */
 const ApiTareas = {
-  urlBase: () => TaskflowApiClient.urlBaseTareas(),
   listar: () => TaskflowApiClient.listarTareas(),
   crear: (cuerpo) => TaskflowApiClient.crearTarea(cuerpo),
   eliminar: (id) => TaskflowApiClient.eliminarTarea(id),
@@ -136,8 +128,9 @@ const ApiTareas = {
 };
 
 /**
- * Funciones asíncronas de conveniencia (misma implementación que TaskflowApiClient).
- * Útiles si se prefiere importar por nombre en futuros módulos ES o para documentación explícita.
+ * Funciones asíncronas de conveniencia.
+ * Por si en el futuro se migran los scripts a módulos y se importan por nombre.
+ * Hoy el resto del front usa `ApiTareas`; estas quedan como API explícita opcional.
  */
 async function fetchListarTareas() {
   return TaskflowApiClient.listarTareas();
