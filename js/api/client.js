@@ -1,26 +1,5 @@
-/**
- * Capa de red del cliente: peticiones HTTP asíncronas con la API nativa fetch
- * contra el servidor Node/Express (recurso /api/v1/tasks).
- *
- * No se usa axios para no añadir dependencias al front estático; el patrón con fetch
- * es equivalente (await fetch + JSON).
- */
-
-/**
- * URL base por defecto cuando la app no se abre vía HTTP desde el mismo origen
- * (p. ej. file://). Debe coincidir con el puerto del servidor (PORT en server/.env).
- * @type {string}
- */
 const URL_BASE_TAREAS_DESARROLLO = "http://localhost:3000/api/v1/tasks";
 
-/**
- * Resuelve la URL base del recurso tareas (sin barra final).
- * Prioridad: meta tag en index.html → mismo origen si hay protocolo http(s) → fallback localhost.
- *
- * Opcional en index.html: <meta name="taskflow-api-tasks-base" content="http://localhost:3000/api/v1/tasks" />
- *
- * @returns {string}
- */
 function resolverUrlBaseApiTareas() {
   const meta = document.querySelector('meta[name="taskflow-api-tasks-base"]');
   const contenidoMeta = meta && meta.getAttribute("content");

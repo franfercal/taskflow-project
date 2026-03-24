@@ -1,77 +1,42 @@
-# API REST y documentación Swagger (OpenAPI)
+# API REST y Swagger
 
-TaskFlow expone la API de tareas bajo **`/api/v1/tasks`**. La documentación de contrato está en formato **OpenAPI 3.0** y se puede explorar con **Swagger UI** cuando el servidor Express está en marcha.
+TaskFlow expone la API de tareas bajo `/api/v1/tasks`.
 
----
+## Requisito previo
 
-## Requisito
-
-El backend debe estar ejecutándose (desde la carpeta `server/`):
-
+El backend tiene que estar ejecutado:
 ```bash
 cd server
 pnpm install
-cp .env.example .env   # define PORT, p. ej. 3000
+.env   # define PORT, por ejemplo 3000
 pnpm dev
 ```
 
-Sustituye `PUERTO` en las URLs siguientes por el valor de `PORT` (por defecto suele ser `3000`).
+En las URLs de abajo sustituye `PUERTO` por el valor de `PORT`.
 
----
+## Swagger UI
 
-## Swagger UI (documentación interactiva)
+Abre `http://127.0.0.1:PUERTO/api-docs` en el navegador. Ahí tienes todos los endpoints documentados con sus esquemas, y el botón "Try it out" para enviar peticiones reales al servidor sin salir del navegador. La interfaz la monta el paquete `swagger-ui-express` desde `server/src/index.js`.
 
-**URL:** `http://127.0.0.1:PUERTO/api-docs`
+## Especificación OpenAPI
 
-Qué ofrece:
+La fuente principal es `server/openapi.yaml` en el repo. Desde el servidor también está disponible en dos formatos:
 
-- Lista de **endpoints** (GET, POST, PATCH, DELETE) con descripción y esquemas.
-- Esquemas JSON (**Task**, cuerpos de creación/actualización, respuestas de error).
-- Botón **“Try it out”** para enviar peticiones reales al mismo servidor (útil en desarrollo).
+- `http://127.0.0.1:PUERTO/openapi.json`
+- `http://127.0.0.1:PUERTO/openapi.yaml`
 
-La interfaz gráfica la sirve el paquete **`swagger-ui-express`**, montado en Express en `server/src/index.js`.
-
----
-
-## Ficheros y endpoints de especificación
-
-| Recurso | Ubicación / URL | Uso |
-|---------|-----------------|-----|
-| **Fuente YAML** | [`server/openapi.yaml`](../server/openapi.yaml) en el repo | Editar el contrato; es la fuente principal del documento. |
-| **JSON en runtime** | `http://127.0.0.1:PUERTO/openapi.json` | Misma especificación con `servers[0].url` ajustado a tu `PORT` (útil para importar en Postman, Insomnia, generadores de cliente). |
-| **YAML vía HTTP** | `http://127.0.0.1:PUERTO/openapi.yaml` | Descarga el YAML tal como está en disco (sin sustitución de puerto en el cuerpo). |
-
----
 
 ## Relación con el código
 
-- **Rutas HTTP:** `server/src/routes/task.routes.js`
-- **Validación y respuestas:** `server/src/controllers/task.controller.js`
-- **Lógica en memoria:** `server/src/services/task.service.js`
+- Rutas HTTP: `server/src/routes/task.routes.js`
+- Validación y respuestas: `server/src/controllers/task.controller.js`
+- Lógica en memoria: `server/src/services/task.service.js`
 
-Si cambias rutas o cuerpos de respuesta, actualiza **`server/openapi.yaml`** para que Swagger siga siendo fiel al comportamiento real.
-
----
-
-## Ejemplos desde terminal (HTTPie)
-
-En **[server/README.md](../server/README.md)** tienes comandos **HTTPie** con **request/response** (incluidos errores **400**, **404** y **500** con la ruta sandbox opcional).
-
----
-
-## Resumen de URLs (desarrollo local)
-
+## URLs de desarrollo
 ```
-http://127.0.0.1:PUERTO/              → aplicación web (estáticos)
+http://127.0.0.1:PUERTO/              → aplicación web
 http://127.0.0.1:PUERTO/api-docs      → Swagger UI
 http://127.0.0.1:PUERTO/openapi.json  → OpenAPI 3.0 (JSON)
 http://127.0.0.1:PUERTO/openapi.yaml  → OpenAPI 3.0 (YAML)
-http://127.0.0.1:PUERTO/api/v1/tasks  → recurso principal de tareas
+http://127.0.0.1:PUERTO/api/v1/tasks  → recurso de tareas
 ```
-
----
-
-## Véase también
-
-- [README del servidor](../server/README.md) — arranque, tabla de códigos HTTP, ejemplos HTTPie detallados.
-- [README2.md](../README2.md) — arquitectura del monorepo y pipeline de middlewares Express.

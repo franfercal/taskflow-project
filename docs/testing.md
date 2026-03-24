@@ -1,36 +1,32 @@
 # Testing — TaskFlow
 
-## Prueba manual (recomendada)
+## Prueba manual
 
-La aplicación espera el **backend** que sirve la API y los estáticos:
+La forma más directa de probar la app es arrancando el backend y abriendo el navegador.
 
-1. En la raíz del repo: `pnpm run build` (CSS de Tailwind).
-2. En `server/`: `pnpm install` si hace falta, luego `pnpm dev`.
-3. Abre en el navegador la URL base (por defecto `http://127.0.0.1:3000/`).
+1. En la raíz del repo: `pnpm run build` para compilar los estilos.
+2. En `server/`: `pnpm install` si es la primera vez, luego `pnpm dev`.
+3. Abre `http://127.0.0.1:3000/` en el navegador.
 
-Sin servidor activo, la lista de tareas puede quedar vacía y las operaciones fallarán.
-
----
+Sin servidor activo la lista de tareas quedará vacía y las operaciones fallarán.
 
 ## Playwright (opcional)
 
-Si el proyecto incluye [Playwright](https://playwright.dev/) como dependencia, puedes añadir de nuevo `playwright.config.js`, scripts en `package.json` (por ejemplo `test:e2e`) y specs bajo `tests/`.
+Si el proyecto incluye Playwright como dependencia, puedes recuperar los tests añadiendo `playwright.config.js`, los scripts en `package.json` y los specs bajo `tests/`.
 
-**Requisitos habituales**
-
-- Node.js y pnpm
-- Navegadores de Playwright (solo la primera vez):
-
+Para instalar los navegadores la primera vez:
 ```bash
 pnpm exec playwright install chromium
 ```
 
-**Comandos típicos** (solo aplican si los defines en `package.json`)
+Los comandos típicos, una vez los definas en `package.json`:
+```bash
+pnpm test:e2e           # ejecutar la suite E2E
+pnpm test:e2e:ui        # interfaz de depuración
+pnpm test:e2e:headed    # con navegador visible
+```
 
-| Comando | Descripción |
-|--------|-------------|
-| `pnpm test:e2e` | Ejecutar suite E2E |
-| `pnpm test:e2e:ui` | Interfaz de depuración de Playwright |
-| `pnpm test:e2e:headed` | Navegador visible |
-
-Los escenarios suelen cubrir carga de página, modal de nueva tarea, validación de título obligatorio y aparición de tareas en la lista. Tras una ejecución, el reporte HTML se abre con `pnpm exec playwright show-report`.
+Los escenarios suelen cubrir la carga de página, el modal de nueva tarea, la validación del título y la aparición de tareas en la lista. Cuando termina una ejecución puedes ver el reporte con:
+```bash
+pnpm exec playwright show-report
+```
