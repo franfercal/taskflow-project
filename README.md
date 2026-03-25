@@ -12,6 +12,25 @@ Para encontrar lo que buscas hay varios filtros: vistas por tiempo (Hoy, Esta se
 
 La interfaz tiene tema claro y oscuro, guarda tu preferencia en el navegador, es responsive con sidebar colapsable en móvil y valida los formularios con mensajes de error.
 
+## Cómo está organizado el código
+ 
+El cliente HTTP está en `js/api/client.js`. Es el archivo que construye las peticiones y convierte la respuesta a JSON. Se compone de una función central 'peticionHttpson' ejecuta el 'fetch'. La función 'TaskflowApiClient' tiene los cinco mñtodos que se usan en la app. Luego se hace un alias `ApiTareas` para el controlador de taress.
+ 
+Los controladores están en `js/controladores/`. `task.js`. Es el que llama a la API cada vez que el usuario hace algo.
+`project.js` también usa la API cuando hay que renombrar o eliminar un proyecto.
+ 
+El backend es un servidor Express en `server/src/`. Tiene tres capas: las rutas en `routes/task.routes.js` definen los endpoints, el controlador en `controllers/task.controller.js` que valida los datos, y el servicio en `services/task.service.js` que es donde se manipulan las tareas (en memoria, sin base de datos).
+ 
+Los endpoints disponibles son:
+ 
+- `GET /api/v1/tasks` para listar todas las tareas
+- `POST /api/v1/tasks` para crear una
+- `PATCH /api/v1/tasks/:id` para actualizar campos concretos
+- `DELETE /api/v1/tasks/:id` para eliminar una
+- `DELETE /api/v1/tasks/completed` para eliminar todas las completadas de golpe
+ 
+Hay un endpoint extra `/_sandbox/force-500` que solo se activa si pones `ENABLE_API_TEST_ROUTES=true` en el `.env`, sirve para probar que el manejo de errores funciona bien.
+
 ## Tecnologías
 
 En el frontend: HTML5, Tailwind CSS 4 y JavaScript vanilla con módulos. En el backend: un servidor Express minimalista. Como librerías adicionales usa Flatpickr para el selector de fecha y hora, y SweetAlert2 para los modales de confirmación.
@@ -43,7 +62,7 @@ El detalle de cada módulo y su responsabilidad está en [js/README.md](js/READM
 
 Necesitas Node.js y pnpm (o npm).
 ```bash
-git clone <url-del-repositorio>
+git clone <https://github.com/franfercal/taskflow-project.git>
 cd taskflow-project
 pnpm install
 pnpm run build
@@ -61,6 +80,8 @@ Con el servidor corriendo (`cd server && pnpm dev`) tienes disponible:
 - OpenAPI en `/openapi.json` y `/openapi.yaml`
 - Guía de uso de Swagger: [docs/api-swagger.md](docs/api-swagger.md)
 - Ejemplos con HTTPie y respuestas de error: [server/README.md](server/README.md)
+- Manejos de errores API: [docs/MANEJO_ERRORES_API.md](docs/MANEJO_ERRORES_API.md)
+- LLamadas de la API: [docs/API_LLAMADAS.md](docs/API_LLAMADAS.md)
 
 ## Documentación ampliada
 

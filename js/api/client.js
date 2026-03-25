@@ -1,7 +1,7 @@
-const URL_BASE_TAREAS_DESARROLLO = "http://localhost:3000/api/v1/tasks";
+const URL_BASE_DEV = "http://localhost:3000/api/v1/tasks";
 
-// meta taskflow-api-tasks-base > mismo origen > file:// cae a localhost:3000
-function resolverUrlBaseApiTareas() {
+// A que URL conectarse para la API de tareas
+function urlAPI() {
   const meta = document.querySelector('meta[name="taskflow-api-tasks-base"]');
   const contenidoMeta = meta && meta.getAttribute("content");
   if (contenidoMeta && contenidoMeta.trim()) {
@@ -9,12 +9,12 @@ function resolverUrlBaseApiTareas() {
   }
   const { protocol, hostname } = window.location;
   if (protocol === "file:" || hostname === "") {
-    return URL_BASE_TAREAS_DESARROLLO;
+    return URL_BASE_DEV;
   }
   return `${window.location.origin}/api/v1/tasks`;
 }
 
-// fetch + parseo json; si no va bien el status va en error.status
+// Realiza petición HTTP y devuel JSON 
 async function peticionHttpJson(urlCompleta, opcionesFetch = {}) {
   const cabeceras = { ...opcionesFetch.headers };
   if (
@@ -53,41 +53,43 @@ async function peticionHttpJson(urlCompleta, opcionesFetch = {}) {
   return datosParseados;
 }
 
-// base + sufijo tipo "" | "/1" | "/completed"
+// URL completa de un endpoint 
 function urlTareas(sufijo) {
-  const base = resolverUrlBaseApiTareas();
+  const base = urlAPI();
   return `${base}${sufijo}`;
 }
 
+// Cliente completo de la API REST
 const TaskflowApiClient = {
+  // GET /tasks — devuelve todas las tareas
   async listarTareas() {
     return peticionHttpJson(urlTareas(""), { method: "GET" });
   },
-
+  // POST /tasks crea una nueva tarea
   async crearTarea(cuerpo) {
     return peticionHttpJson(urlTareas(""), {
       method: "POST",
       body: JSON.stringify(cuerpo),
     });
   },
-
+  // DELETE /tasks/:id — elimina tarea con id
   async eliminarTarea(idTarea) {
     return peticionHttpJson(urlTareas(`/${idTarea}`), { method: "DELETE" });
   },
-
+  // PATCH /tasks/:id — actualiza campos de una tarea
   async actualizarTarea(idTarea, parches) {
     return peticionHttpJson(urlTareas(`/${idTarea}`), {
       method: "PATCH",
       body: JSON.stringify(parches),
     });
   },
-
+  // DELETE /tasks/completed — elimina todas las completadas
   async eliminarTareasCompletadas() {
     return peticionHttpJson(urlTareas("/completed"), { method: "DELETE" });
   },
 };
 
-// Atajos que usa TareasController (mismo api, nombres más cortos).
+// Alias para el controlador de tarea
 const ApiTareas = {
   listar: () => TaskflowApiClient.listarTareas(),
   crear: (cuerpo) => TaskflowApiClient.crearTarea(cuerpo),
@@ -96,7 +98,7 @@ const ApiTareas = {
   eliminarCompletadas: () => TaskflowApiClient.eliminarTareasCompletadas(),
 };
 
-// Por si pasamos a módulos ES y queremos import { fetchListarTareas } … hoy casi nadie las usa.
+// Funcione exportables por si se usa como modulo.
 async function fetchListarTareas() {
   return TaskflowApiClient.listarTareas();
 }
