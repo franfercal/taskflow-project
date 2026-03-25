@@ -1,12 +1,5 @@
 const Estadisticas = {
-  /**
-   * Recalcula y escribe en el DOM:
-   * - est-completadas / est-pendientes (Progreso)
-   * - cnt-todas, cnt-hoy, cnt-semana, cnt-mes, cnt-pendientes, cnt-completadas (Vistas)
-   * - subtitle-pendientes (ej. "jueves, 12 de marzo · 3 pendientes")
-   * - btn-limpiar-completadas: disabled si no hay tareas completadas
-   * @returns {void}
-   */
+  // Rellena contadores del sidebar, subtítulo y estado del botón limpiar completadas.
   actualizar() {
     const completadas = State.tareas.filter((tarea) => tarea.hecha).length;
     const pendientes = State.tareas.length - completadas;
@@ -25,7 +18,7 @@ const Estadisticas = {
     const fechaFormateada = Utils.formatearFecha({ weekday: "long", day: "numeric", month: "long" });
     const plural = Utils.plural(pendientes);
 
-    // Subtítulo según fase de red: carga inicial, error al listar o vista normal.
+    // Subtítulo cargando, error con detalle o modo normal.
     if (State.estadoRedLista === "cargando") {
       this.set("subtitle-pendientes", `${fechaFormateada} · Sincronizando con el servidor…`);
     } else if (State.estadoRedLista === "error") {
@@ -46,19 +39,12 @@ const Estadisticas = {
       this.set("subtitle-pendientes", `${fechaFormateada} · ${pendientes} pendiente${plural}`);
     }
 
-    // Habilitar "Limpiar completadas" solo si hay al menos una tarea hecha (evita clics vacíos).
     const botonLimpiarCompletadas = Utils.getElement("btn-limpiar-completadas");
     if (botonLimpiarCompletadas) {
       botonLimpiarCompletadas.disabled = completadas === 0 || State.estadoRedLista !== "exito";
     }
   },
 
-  /**
-   * Asigna el texto de un elemento por id.
-   * @param {string} id - id del elemento en el DOM
-   * @param {string|number} valor - valor a mostrar (se convierte a string)
-   * @returns {void}
-   */
   set(id, valor) {
     const elemento = Utils.getElement(id);
     if (elemento) Utils.setText(elemento, String(valor));

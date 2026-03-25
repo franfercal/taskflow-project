@@ -1,5 +1,6 @@
 const URL_BASE_TAREAS_DESARROLLO = "http://localhost:3000/api/v1/tasks";
 
+// meta taskflow-api-tasks-base > mismo origen > file:// cae a localhost:3000
 function resolverUrlBaseApiTareas() {
   const meta = document.querySelector('meta[name="taskflow-api-tasks-base"]');
   const contenidoMeta = meta && meta.getAttribute("content");
@@ -13,10 +14,7 @@ function resolverUrlBaseApiTareas() {
   return `${window.location.origin}/api/v1/tasks`;
 }
 
-/**
- * Ejecuta una petición HTTP con fetch, espera el cuerpo como texto y parsea JSON si aplica.
- * Lanza Error con propiedad .status si la respuesta no es OK.
- */
+// fetch + parseo json; si no va bien el status va en error.status
 async function peticionHttpJson(urlCompleta, opcionesFetch = {}) {
   const cabeceras = { ...opcionesFetch.headers };
   if (
@@ -33,7 +31,6 @@ async function peticionHttpJson(urlCompleta, opcionesFetch = {}) {
   });
 
   const textoCuerpo = await respuesta.text();
-  /** @type {*|null} */
   let datosParseados = null;
   if (textoCuerpo) {
     try {
@@ -56,28 +53,17 @@ async function peticionHttpJson(urlCompleta, opcionesFetch = {}) {
   return datosParseados;
 }
 
-/**
- * Construye la URL del recurso tareas + sufijo (ej. "/1", "/completed").
- */
+// base + sufijo tipo "" | "/1" | "/completed"
 function urlTareas(sufijo) {
   const base = resolverUrlBaseApiTareas();
   return `${base}${sufijo}`;
 }
 
 const TaskflowApiClient = {
-  /**
-   * GET /api/v1/tasks — lista todas las tareas.
-   * @returns {Promise<Object[]>}
-   */
   async listarTareas() {
     return peticionHttpJson(urlTareas(""), { method: "GET" });
   },
 
-  /**
-   * POST /api/v1/tasks — crea una tarea.
-   * @param {Object} cuerpo - Payload JSON esperado por el backend
-   * @returns {Promise<Object>}
-   */
   async crearTarea(cuerpo) {
     return peticionHttpJson(urlTareas(""), {
       method: "POST",
@@ -85,21 +71,10 @@ const TaskflowApiClient = {
     });
   },
 
-  /**
-   * DELETE /api/v1/tasks/:id
-   * @param {number} idTarea
-   * @returns {Promise<*>}
-   */
   async eliminarTarea(idTarea) {
     return peticionHttpJson(urlTareas(`/${idTarea}`), { method: "DELETE" });
   },
 
-  /**
-   * PATCH /api/v1/tasks/:id
-   * @param {number} idTarea
-   * @param {Object} parches - Campos parciales (hecha, titulo...)
-   * @returns {Promise<Object>}
-   */
   async actualizarTarea(idTarea, parches) {
     return peticionHttpJson(urlTareas(`/${idTarea}`), {
       method: "PATCH",
@@ -107,18 +82,12 @@ const TaskflowApiClient = {
     });
   },
 
-  /**
-   * DELETE /api/v1/tasks/completed
-   * @returns {Promise<{ eliminadas: number }>}
-   */
   async eliminarTareasCompletadas() {
     return peticionHttpJson(urlTareas("/completed"), { method: "DELETE" });
   },
 };
 
-/**
- * Alias con nombres cortos para controladores (`TareasController`, etc.).
- */
+// Atajos que usa TareasController (mismo api, nombres más cortos).
 const ApiTareas = {
   listar: () => TaskflowApiClient.listarTareas(),
   crear: (cuerpo) => TaskflowApiClient.crearTarea(cuerpo),
@@ -127,11 +96,7 @@ const ApiTareas = {
   eliminarCompletadas: () => TaskflowApiClient.eliminarTareasCompletadas(),
 };
 
-/**
- * Funciones asíncronas de conveniencia.
- * Por si en el futuro se migran los scripts a módulos y se importan por nombre.
- * Hoy el resto del front usa `ApiTareas`; estas quedan como API explícita opcional.
- */
+// Por si pasamos a módulos ES y queremos import { fetchListarTareas } … hoy casi nadie las usa.
 async function fetchListarTareas() {
   return TaskflowApiClient.listarTareas();
 }

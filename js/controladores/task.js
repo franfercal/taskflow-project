@@ -1,25 +1,13 @@
-/**
- * Controlador de tareas: alta, marcar/desmarcar como hecha y borrado.
- * Persistencia vía API (`js/api/client.js` → `TaskflowApiClient` / `ApiTareas`).
- * Gestión de estados de red: indicador en mutaciones, errores con código HTTP y reintento de carga inicial.
- */
+// Tareas: crud vía api, barra de “estoy guardando” y sync al arrancar.
 
 const TareasController = {
-  /**
-   * Normaliza el argumento proyecto (string o array) a un array de nombres no vacíos.
-   */
   _normalizarProyectos(proyecto) {
     if (Array.isArray(proyecto)) return proyecto.filter((nombreProyecto) => nombreProyecto && String(nombreProyecto).trim());
     if (proyecto) return [String(proyecto).trim()];
     return [];
   },
 
-  /**
-   * Ejecuta una operación asíncrona que modifica datos en el servidor y actualiza la barra de actividad global.
-   * @template T
-   * @param {() => Promise<T>} operacion
-   * @returns {Promise<T>}
-   */
+  // Enciende la barra azul mientras dura el fetch de crear/patch/delete.
   async _conIndicadorMutacion(operacion) {
     State.peticionesMutacionEnCurso += 1;
     Render.actualizarBarraActividadRed();
@@ -31,19 +19,11 @@ const TareasController = {
     }
   },
 
-  /**
-   * Expone el contador de mutación para otros controladores (p. ej. `ProyectosController.eliminar`).
-   * @template T
-   * @param {() => Promise<T>} operacion
-   * @returns {Promise<T>}
-   */
+  // Igual que _conIndicadorMutacion pero público para ProyectosController.eliminar.
   conIndicadorMutacion(operacion) {
     return this._conIndicadorMutacion(operacion);
   },
 
-  /**
-   * Muestra un aviso al usuario si SweetAlert2 está cargado; incluye código HTTP si existe.
-   */
   _notificarErrorRed(error, titulo) {
     console.error(error);
     if (typeof Swal !== "undefined") {
@@ -57,12 +37,7 @@ const TareasController = {
     }
   },
 
-  /**
-   * Obtiene tareas del servidor y fusiona nombres de proyecto en `State.proyectos`.
-   * Actualiza `estadoRedLista` y `errorRedLista` para la UI (éxito / error con 400, 500 o fallo de red).
-   * No llama a `Render`: quien invoque debe pintar después (p. ej. `App.init` o `reintentarCargaLista`).
-   * @returns {Promise<void>}
-   */
+  // GET inicial; no pinta solo: quien llama hace render después.
   async sincronizarConServidorAlInicio() {
     try {
       const lista = await ApiTareas.listar();
@@ -90,10 +65,6 @@ const TareasController = {
     }
   },
 
-  /**
-   * Vuelve a pedir la lista al servidor tras un error (botón "Reintentar" en la UI).
-   * @returns {Promise<void>}
-   */
   async reintentarCargaLista() {
     State.estadoRedLista = "cargando";
     State.errorRedLista = null;
@@ -106,23 +77,10 @@ const TareasController = {
     Estadisticas.actualizar();
   },
 
-  /**
-   * Busca una tarea por id en State.tareas.
-   * @param {number} id
-   * @returns {Object|undefined}
-   */
   _buscarTarea(id) {
     return State.tareas.find((tarea) => tarea.id === id);
   },
 
-  /**
-   * Crea una tarea en el servidor y la inserta al inicio de State.tareas.
-   * @param {string} titulo - Texto de la tarea (obligatorio)
-   * @param {string|string[]} proyecto - Nombre del proyecto o array de nombres (varios proyectos)
-   * @param {string} prioridad - "alta" | "media" | "baja"
-   * @param {string} fecha - "YYYY-MM-DD", "YYYY-MM-DD HH:mm" o "Sin fecha"
-   * @returns {Promise<boolean>} true si se añadió
-   */
   async agregar(titulo, proyecto, prioridad, fecha) {
     if (Utils.estaVacio(titulo)) {
       console.warn("Imposible añadir tarea sin título");
@@ -150,12 +108,6 @@ const TareasController = {
     }
   },
 
-  /**
-   * Añade un proyecto a la tarea en el servidor y en memoria.
-   * @param {number} id - id de la tarea
-   * @param {string} nombreProyecto - Nombre del proyecto a añadir
-   * @returns {Promise<boolean>}
-   */
   async añadirAProyecto(id, nombreProyecto) {
     const nombre = nombreProyecto?.trim();
     if (!nombre) return false;
@@ -174,12 +126,6 @@ const TareasController = {
     }
   },
 
-  /**
-   * Quita un proyecto de la tarea en el servidor y en memoria.
-   * @param {number} id - id de la tarea
-   * @param {string} nombreProyecto - Nombre del proyecto a quitar
-   * @returns {Promise<boolean>}
-   */
   async quitarDeProyecto(id, nombreProyecto) {
     const tarea = this._buscarTarea(id);
     if (!tarea || !Array.isArray(tarea.proyectos)) return false;
@@ -197,11 +143,6 @@ const TareasController = {
     }
   },
 
-  /**
-   * Cambia el estado "hecha" de la tarea con el id dado (toggle completada/pendiente).
-   * @param {number} id - id de la tarea
-   * @returns {Promise<void>}
-   */
   async alternarHecha(id) {
     const tarea = this._buscarTarea(id);
     if (!tarea) return;
@@ -215,11 +156,6 @@ const TareasController = {
     }
   },
 
-  /**
-   * Elimina la tarea con el id indicado en el servidor y en State.
-   * @param {number} id - id de la tarea a eliminar
-   * @returns {Promise<void>}
-   */
   async eliminar(id) {
     try {
       await this._conIndicadorMutacion(() => ApiTareas.eliminar(id));
@@ -230,10 +166,6 @@ const TareasController = {
     }
   },
 
-  /**
-   * Elimina todas las tareas completadas vía API.
-   * @returns {Promise<number>} Cantidad eliminada según el servidor (o 0 si error)
-   */
   async eliminarTodasCompletadas() {
     try {
       const resultado = await this._conIndicadorMutacion(() => ApiTareas.eliminarCompletadas());
@@ -247,10 +179,6 @@ const TareasController = {
     }
   },
 
-  /**
-   * Refresca en pantalla la lista de tareas, la barra lateral de proyectos y los chips de filtros.
-   * @returns {void}
-   */
   actualizarUI() {
     Render.renderizarTareas();
     Render.renderizarProyectosLateral();

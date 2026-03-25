@@ -10,19 +10,16 @@ const YAML = require("yaml");
 const aplicacion = express();
 const numeroPuerto = Number(process.env.PORT);
 
-/** Raíz del repo sirve index.html, /js, /styles desde el mismo origen que la API. */
+// Carpeta del repo: mismo sitio para el front y la api
 const raizProyecto = path.join(__dirname, "..", "..");
 const rutaArchivoOpenapi = path.join(__dirname, "..", "openapi.yaml");
 
-/**
- * Carga la especificación OpenAPI 3 desde YAML y fija el servidor según PORT.
- * Si el fichero falla, la app arranca igual pero sin Swagger UI.
- */
+// Lee openapi.yaml y mete la url del servidor
 function cargarDocumentoOpenapi() {
   try {
     const textoYaml = fs.readFileSync(rutaArchivoOpenapi, "utf8");
     const documento = YAML.parse(textoYaml);
-    /** URL pública del API para Swagger (Vercel expone VERCEL_URL en preview/producción). */
+    // En vercel swagger tiene que apuntar al dominio real, no a localhost.
     const urlBaseServidor =
       process.env.VERCEL_URL != null && String(process.env.VERCEL_URL).trim() !== ""
         ? `https://${String(process.env.VERCEL_URL).replace(/^https?:\/\//, "")}`
@@ -39,7 +36,7 @@ function cargarDocumentoOpenapi() {
     ];
     return documento;
   } catch (error) {
-    console.error("TaskFlow: no se pudo cargar openapi.yaml; Swagger UI deshabilitado.", error.message);
+    console.error("TaskFlow: no se pudo cargar openapi.yaml. Swagger UI deshabilitado.", error.message);
     return null;
   }
 }
@@ -49,17 +46,17 @@ const documentoOpenapi = cargarDocumentoOpenapi();
 aplicacion.use(cors());
 aplicacion.use(express.json());
 
-/** Rutas de sandbox (500 forzado, etc.): solo si ENABLE_API_TEST_ROUTES=true */
+// Rutas de prueba solo si pones ENABLE_API_TEST_ROUTES=true.
 if (process.env.ENABLE_API_TEST_ROUTES === "true") {
   const enrutadorSandbox = require("./routes/test-sandbox.routes");
   aplicacion.use("/api/v1", enrutadorSandbox);
-  console.warn("TaskFlow: rutas de prueba API activas (ENABLE_API_TEST_ROUTES). No uses en producción pública.");
+  console.warn("TaskFlow: rutas de prueba API activas (ENABLE_API_TEST_ROUTES).");
 }
 
 const rutasTareas = require("./routes/task.routes");
 aplicacion.use("/api/v1/tasks", rutasTareas);
 
-/** Documentación OpenAPI + Swagger UI (antes de estáticos para no ser interceptado). */
+// Swagger antes que los estaticos sino el index se salta las rutas como /openapi.json
 if (documentoOpenapi) {
   aplicacion.get("/openapi.yaml", (req, res) => {
     res.type("text/yaml; charset=utf-8").send(fs.readFileSync(rutaArchivoOpenapi, "utf8"));
@@ -89,6 +86,7 @@ const ERRORES_HTTP_CLIENTE_MENSAJE = {
   },
 };
 
+// Errores a json el resto como 500 generico.
 function manejadorErrores(err, req, res, next) {
   if (res.headersSent) {
     return next(err);
@@ -111,6 +109,7 @@ function manejadorErrores(err, req, res, next) {
 
 aplicacion.use(manejadorErrores);
 
+// Arranque clasico con node, en vercel esto no funciona.
 if (require.main === module) {
   aplicacion.listen(numeroPuerto, "0.0.0.0", () => {
     console.log(`Servidor escuchando en http://127.0.0.1:${numeroPuerto} (API tareas: /api/v1/tasks)`);

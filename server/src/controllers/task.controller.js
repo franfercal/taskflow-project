@@ -1,12 +1,12 @@
 const servicioTareas = require("../services/task.service");
 
-// GET /api/v1/tasks — Lista todas las tareas
+// GET /api/v1/tasks
 function listarTareas(req, res) {
   const lista = servicioTareas.obtenerTodas();
   res.status(200).json(lista);
 }
 
-// POST /api/v1/tasks — Crea una tarea 
+// POST /api/v1/tasks — valida el body y delega en el servicio
 function crearTarea(req, res) {
   const cuerpo = req.body;
 
@@ -71,7 +71,7 @@ function crearTarea(req, res) {
   res.status(201).json(tareaCreada);
 }
 
-// DELETE /api/v1/tasks/:id 
+// DELETE /api/v1/tasks/:id
 function eliminarTarea(req, res) {
   const idCrudo = req.params.id;
 
@@ -99,10 +99,10 @@ function eliminarTarea(req, res) {
   res.status(204).send();
 }
 
-// Claves permitidas
+// Solo estos campos en PATCH lo demas lo mandamos a 400
 const CLAVES_PATCH_PERMITIDAS = new Set(["titulo", "prioridad", "proyectos", "fecha", "hecha"]);
 
-// PATCH /api/v1/tasks/:id — Actualizacion
+// PATCH /api/v1/tasks/:id
 function actualizarTarea(req, res) {
   const idCrudo = req.params.id;
   const idNumerico = Number(idCrudo);
@@ -189,7 +189,7 @@ function actualizarTarea(req, res) {
   }
 }
 
-//DELETE /api/v1/tasks/completed — Borra todas las tareas completadas
+// DELETE /api/v1/tasks/completed
 function eliminarTodasCompletadas(req, res) {
   const cantidad = servicioTareas.eliminarCompletadas();
   res.status(200).json({ eliminadas: cantidad });

@@ -1,31 +1,22 @@
-/**
- * Estado global de la aplicación:
- * proyectos, tareas, filtro activo, texto de búsqueda y estado de la carga vía red.
- */
+// Estado global proyectos, tareas, filtro, búsqueda y cómo va la carga con el servidor
 
 const State = {
-  /** Valor por defecto cuando una tarea no tiene fecha límite (evita strings mágicos en el código). */
+  // Texto cuando la tarea no tiene fecha
   SIN_FECHA: "Sin fecha",
 
-  /** Lista de nombres de proyectos (por defecto algunos de ejemplo). */
+  // Nombres del sidebar empiezan con ejemplos hasta que lleguen datos del api
   proyectos: ["Desarrollo Web", "FrontEnd", "BackEnd", "JS", "Python"],
-  /** Lista de tareas; cada una tiene id, titulo, proyectos (array de nombres), prioridad, fecha, hecha. */
   tareas: [],
 
-  /**
-   * Devuelve el array de nombres de proyectos de una tarea (compatible con formato antiguo proyecto string).
-   * @param {Object} tarea - Objeto tarea con proyectos[] o proyecto (legacy)
-   * @returns {string[]}
-   */
+  // Soporta tareas viejas con un solo `proyecto` string o el array `proyectos`
   proyectosDeTarea(tarea) {
     if (!tarea) return [];
     if (Array.isArray(tarea.proyectos)) return tarea.proyectos;
     if (tarea.proyecto) return [tarea.proyecto];
     return [];
   },
-  /** Filtro actual: "todas", "alta", "media", "baja", "hoy", "semana", "mes", "pendientes", "completadas-vista" o nombre de proyecto. */
+  // Vista activa: todas, prioridad, fechas, pendientes, completadas o nombre de proyecto
   filtroActivo: "todas",
-  /** Texto del buscador; se aplica además del filtro para filtrar por título. */
   busqueda: "",
 
   estadoRedLista: "cargando",

@@ -70,8 +70,10 @@ Todo está en la carpeta [docs/](docs/):
 - [docs/desarrollo.md](docs/desarrollo.md) — Convenciones y guía para contribuir.
 - [docs/api-swagger.md](docs/api-swagger.md) — API REST y Swagger.
 - [docs/testing.md](docs/testing.md) — Tests E2E con Playwright.
+- [docs/README_VERCEL.md](docs/README_VERCEL.md) — Cambios realizados para despliegue en Vercel.
 - [server/README.md](server/README.md) — Documentación del servidor.
 - [server/PRUEBAS_API](server/PRUEBAS_API.md) — Pruebas y documentación de la API.
+
 
 ## Autor
 

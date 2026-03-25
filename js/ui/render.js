@@ -1,93 +1,60 @@
+// Pinta lista, filtros, sidebar de proyectos, tarjetas y estados de red
+
 const Render = {
-  /**
-   * Clases Tailwind por prioridad: borde de la tarjeta y estilo del badge (alta=rojo, media=naranja, baja=azul).
-   */
+  // Borde + badge según prioridad (alta rojo, media naranja, baja azul).
   PRIORIDAD_CLASES: {
     alta: { borde: "border-red-500 dark:border-red-400", badge: "badge badge-alta font-medium text-xs px-2.5 py-1 rounded-full tracking-wide bg-red-500/15 dark:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30 dark:border-red-400/30" },
     media: { borde: "border-orange-500 dark:border-orange-400", badge: "badge badge-media font-medium text-xs px-2.5 py-1 rounded-full tracking-wide bg-orange-500/15 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/30 dark:border-orange-400/30" },
     baja: { borde: "border-blue-500 dark:border-blue-400", badge: "badge badge-baja font-medium text-xs px-2.5 py-1 rounded-full tracking-wide bg-blue-500/15 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30 dark:border-blue-400/30" },
   },
 
-  /** Clases base de la tarjeta de tarea (común a completada y pendiente). */
   CLASES_TARJETA_BASE:
     "task-card group border-2 rounded-xl p-4 px-5 mb-3 flex items-center gap-4 cursor-pointer transition-all duration-200 hover:shadow-lg hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset bg-white dark:bg-gray-900 ",
-  /** Sufijo de clases cuando la tarea está completada (borde verde, opacidad). */
   CLASES_TARJETA_COMPLETADA:
     "completada border-green-500 dark:border-green-400 opacity-50 hover:opacity-100",
-  /** Título de tarea completada (tachado, gris). */
   CLASES_TITULO_HECHA:
     "task-title font-semibold flex-1 min-w-[160px] whitespace-nowrap overflow-hidden text-ellipsis text-base line-through text-gray-600 dark:text-gray-400",
-  /** Título de tarea pendiente. */
   CLASES_TITULO_PENDIENTE:
     "task-title font-semibold flex-1 min-w-[160px] whitespace-nowrap overflow-hidden text-ellipsis text-base text-gray-900 dark:text-gray-100",
-  /** Checkbox cuando la tarea está hecha. */
   CLASES_CHECKBOX_HECHA:
     "border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500 text-white",
-  /** Checkbox cuando la tarea está pendiente. */
   CLASES_CHECKBOX_PENDIENTE:
     "border-gray-200 dark:border-gray-600 text-transparent",
-  /** Chip de proyecto en la tarjeta (con borde y fondo). */
   CLASES_CHIP_PROYECTO:
     "task-proyecto font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 rounded px-2.5 py-1",
-  /** Panel de carga mientras GET /tasks no ha respondido. */
   CLASES_PANEL_CARGA_LISTA:
     "red-estado-carga flex flex-col items-center justify-center py-16 px-6 rounded-xl border-2 border-dashed border-blue-200 dark:border-blue-800/60 bg-blue-50/60 dark:bg-blue-950/25",
-  /** Panel de error al cargar la lista (400, 500 o red). */
   CLASES_PANEL_ERROR_LISTA:
     "red-estado-error flex flex-col items-stretch max-w-lg mx-auto py-8 px-6 rounded-xl border-2 bg-amber-50/80 dark:bg-amber-950/20 text-gray-900 dark:text-gray-100",
-  /** Placeholder cuando la tarea no tiene proyecto. */
   CLASES_SIN_PROYECTO:
     "task-proyecto font-mono text-xs text-gray-400 dark:text-gray-500 italic",
-  /** Contenedor de fecha/hora en tarjeta. */
   CLASES_FECHA_HORA: "task-fecha font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap",
-  /** Tiempo restante hasta la fecha límite (días/horas). */
   CLASES_TIEMPO_RESTANTE: "task-tiempo-restante font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap",
-  /** Tiempo restante cuando queda poco (menos de 24 h) o ya venció. */
   CLASES_TIEMPO_RESTANTE_URGENTE: "task-tiempo-restante font-mono text-xs text-red-600 dark:text-red-400 font-medium whitespace-nowrap",
-  /** Botón gestionar proyectos (⊕) en tarjeta. */
   CLASES_BTN_GESTIONAR:
     "btn-gestionar-proyectos w-7 h-7 rounded flex items-center justify-center shrink-0 bg-transparent border-none text-gray-500 dark:text-gray-400 text-[0.9rem] opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset",
-  /** Botón eliminar tarea en tarjeta. */
   CLASES_BTN_ELIMINAR:
     "btn-eliminar w-6.5 h-6.5 rounded flex items-center justify-center shrink-0 bg-transparent border-none text-gray-500 dark:text-gray-400 text-[0.8rem] opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-inset",
-  /** Estado vacío cuando no hay tareas que mostrar. */
   CLASES_EMPTY_STATE:
     "empty-state text-center text-gray-500 dark:text-gray-400 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl py-8 px-4 text-sm font-mono",
-  /** Título de sección (Pendientes / Completadas). */
   CLASES_GRUPO_TITULO:
     "task-group-title flex items-center gap-3 mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest after:content-[''] after:flex-1 after:h-px after:bg-gray-200 dark:after:bg-gray-700",
-  /** Base común de los chips de filtro (prioridad). */
   CLASES_FILTER_CHIP_BASE:
     "filter-chip rounded-full px-4 py-2 text-xs font-mono cursor-pointer transition-all duration-200 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset",
-  /** Ítem de proyecto en el sidebar (nombre + contador + botón eliminar). */
   CLASES_NAV_PROYECTO_ITEM:
     "nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg border border-transparent font-semibold text-sm text-gray-500 dark:text-gray-400 cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset",
-  /** Botón eliminar proyecto en el sidebar. */
   CLASES_NAV_PROYECTO_BTN:
     "btn-eliminar-proyecto w-5.5 h-5.5 rounded flex items-center justify-center shrink-0 bg-transparent border-none text-gray-500 dark:text-gray-400 font-bold text-[0.85rem] ml-1 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-inset",
-  /** Contador de proyecto en el sidebar. */
   CLASES_NAV_PROYECTO_CONTADOR:
     "font-mono text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-full px-2 py-0.5",
 
-  /**
-   * Cierra el sidebar en vista móvil si está abierto (quita la clase "open").
-   * Usado tras cambiar filtro desde estadísticas o desde la lista de proyectos.
-   * @returns {void}
-   */
+  // Cierra el sidebar en móvil tras cambiar filtro o vista.
   _cerrarSidebarSiAbierto() {
     const sidebar = Utils.getElement("sidebar");
     if (sidebar) Utils.removeClass(sidebar, "open");
   },
 
-  /**
-   * Configura la delegación de eventos:
-   * - task-list: clic en botón eliminar → eliminar tarea; clic en tarjeta → alternar hecha
-   * - estadisticas-grid: clic en tarjeta con data-filtro → cambiar filtro y cerrar sidebar en móvil
-   * - filters: clic en filter-chip → cambiar filtro
-   * - nav-proyectos: clic en btn-eliminar-proyecto → eliminar proyecto; clic en nav-item → cambiar vista y cerrar sidebar
-   * - btn-limpiar-completadas: SweetAlert2 (confirmación) y borrado masivo de tareas hechas
-   * @returns {void}
-   */
+  // Delegación: lista (eliminar / gestionar proyectos / toggle hecha), stats, chips, sidebar, limpiar completadas.
   init() {
     // Reintento de carga inicial: el botón vive dentro de #task-list (contenido dinámico).
     const areaPrincipal = document.querySelector("main");
@@ -188,11 +155,7 @@ const Render = {
     }
   },
 
-  /**
-   * Devuelve las clases CSS para el borde y texto del chip de filtro según el valor (todas, alta, media, baja).
-   * @param {string} valor - "todas" | "alta" | "media" | "baja"
-   * @returns {string}
-   */
+  // Clases del chip de prioridad (todas / alta / media / baja).
   clasesBordeFiltro(valor) {
     const mapaEstilos = {
       todas: "border-2 border-gray-500 dark:border-gray-400 text-gray-500 dark:text-gray-400 hover:border-gray-600 dark:hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300",
@@ -203,11 +166,7 @@ const Render = {
     return mapaEstilos[valor] || mapaEstilos.todas;
   },
 
-  /**
-   * Rellena el contenedor #filters con los chips de prioridad (Todas, Alta, Media, Baja)
-   * y marca como activo el que coincide con State.filtroActivo.
-   * @returns {void}
-   */
+  // Chips Todas/Alta/Media/Baja según State.filtroActivo.
   renderizarFiltros() {
     const contenedor = Utils.getElement("filters");
     if (!contenedor) return;
@@ -236,11 +195,7 @@ const Render = {
     );
   },
 
-  /**
-   * Pinta en #nav-proyectos la lista de proyectos con icono, nombre, contador de pendientes
-   * y botón para eliminar proyecto (visible al hacer hover).
-   * @returns {void}
-   */
+  // Sidebar: proyectos, pendientes por proyecto, botón borrar al hover.
   renderizarProyectosLateral() {
     const contenedor = Utils.getElement("nav-proyectos");
     if (!contenedor) return;
@@ -265,10 +220,7 @@ const Render = {
     );
   },
 
-  /**
-   * Muestra u oculta la barra superior cuando hay peticiones de mutación en curso.
-   * @returns {void}
-   */
+  // Barra fina arriba mientras hay POST/PATCH/DELETE en vuelo.
   actualizarBarraActividadRed() {
     const barra = Utils.getElement("red-bar-actividad");
     if (!barra) return;
@@ -279,10 +231,7 @@ const Render = {
     barra.setAttribute("aria-busy", visible ? "true" : "false");
   },
 
-  /**
-   * Habilita búsqueda, filtros y “Nueva tarea” solo cuando la lista inicial cargó con éxito.
-   * @returns {void}
-   */
+  // Desbloquea buscar / filtrar / nueva tarea solo si la carga inicial fue OK.
   actualizarControlesSegunEstadoRed() {
     const listo = State.estadoRedLista === "exito";
     const botonNuevaTarea = document.querySelector(".btn-nueva-tarea");
@@ -304,10 +253,7 @@ const Render = {
     }
   },
 
-  /**
-   * HTML del estado de carga (spinner + texto accesible).
-   * @returns {string}
-   */
+  // Placeholder mientras llegan las tareas (spinner + aria).
   _htmlPanelCargaLista() {
     return `
       <div class="${this.CLASES_PANEL_CARGA_LISTA}" role="status" aria-live="polite" aria-busy="true">
@@ -319,10 +265,7 @@ const Render = {
       </div>`;
   },
 
-  /**
-   * HTML del estado de error con distinción visual 4xx / 5xx / red.
-   * @returns {string}
-   */
+  // Panel feo pero claro: sin red vs 4xx vs 5xx + botón reintentar.
   _htmlPanelErrorLista() {
     const detalle = State.errorRedLista || {
       mensaje: "No se pudo obtener la lista.",
@@ -369,11 +312,7 @@ const Render = {
       </div>`;
   },
 
-  /**
-   * Obtiene las tareas visibles según filtro y búsqueda, pinta la lista en #task-list
-   * (carga, error, vacío o grupos Pendientes / Completadas) y actualiza estadísticas.
-   * @returns {void}
-   */
+  // Lista principal: loading / error / vacío / pendientes+completadas + stats.
   renderizarTareas() {
     const contenedor = Utils.getElement("task-list");
     if (!contenedor) return;
@@ -403,12 +342,7 @@ const Render = {
     Estadisticas.actualizar();
   },
 
-  /**
-   * Genera el HTML de una sección con título (ej. "Pendientes" o "Completadas") y las tarjetas de la lista.
-   * @param {string} titulo - Título del grupo
-   * @param {Object[]} lista - Array de tareas
-   * @returns {string} HTML de la sección o "" si lista está vacía
-   */
+  // Un bloque con título + tarjetas; si lista vacía no pinta nada.
   renderizarGrupo(titulo, lista) {
     if (!lista.length) return "";
 
@@ -419,11 +353,7 @@ const Render = {
       </section>`;
   },
 
-  /**
-   * Convierte una fecha tipo "YYYY-MM-DD" o "YYYY-MM-DD HH:mm" en texto legible (ej. "jueves 12 de marzo").
-   * @param {string} fechaStr - Fecha en formato ISO o State.SIN_FECHA
-   * @returns {string} Texto formateado o el mismo valor si no hay fecha
-   */
+  // "2025-03-12" → "miércoles 12 de marzo" (es-ES).
   formatearFecha(fechaStr) {
     if (!fechaStr || fechaStr === State.SIN_FECHA) return fechaStr;
     const [parteFecha] = fechaStr.split(" ");
@@ -434,23 +364,14 @@ const Render = {
     return `${diaSemana} ${dia} de ${mes}`;
   },
 
-  /**
-   * Extrae la parte hora de una fecha "YYYY-MM-DD HH:mm" (ej. "14:30").
-   * @param {string} fechaStr - Fecha con o sin hora (o State.SIN_FECHA)
-   * @returns {string|null} Hora en formato "HH:mm" o null si no hay hora
-   */
+  // Si viene "YYYY-MM-DD HH:mm", devuelve solo la hora; si no, null.
   extraerHora(fechaStr) {
     if (!fechaStr || fechaStr === State.SIN_FECHA) return null;
     const partesFecha = fechaStr.split(" ");
     return partesFecha[1] || null;
   },
 
-  /**
-   * Calcula el tiempo restante hasta la fecha límite (o si ya pasó).
-   * Si no hay fecha o es "Sin fecha", devuelve null.
-   * @param {string} fechaStr - Fecha en "YYYY-MM-DD" o "YYYY-MM-DD HH:mm" (o State.SIN_FECHA)
-   * @returns {{ texto: string, urgente: boolean } | null} texto para mostrar; urgente = true si venció o queda &lt; 24 h
-   */
+  // "3 d", "Vencida", etc.; urgente si pasó o queda menos de 24h.
   _obtenerTiempoRestante(fechaStr) {
     if (!fechaStr || fechaStr === State.SIN_FECHA) return null;
     const partes = fechaStr.trim().split(" ");
@@ -479,13 +400,7 @@ const Render = {
     return { texto, urgente: menos24h };
   },
 
-  /**
-   * Devuelve las clases CSS aplicables a la tarjeta según prioridad y estado hecha.
-   * @param {Object} tarea - Objeto tarea con hecha y prioridad
-   * @param {boolean} tarea.hecha - Si la tarea está completada
-   * @param {string} tarea.prioridad - "alta" | "media" | "baja"
-   * @returns {{ clasesTarjeta: string, clasesTitulo: string, clasesCheckbox: string, clasesBadge: string }}
-   */
+  // Pack de clases: borde, título, checkbox, badge según prioridad y si está hecha.
   _obtenerClasesTarjeta(tarea) {
     const prioridad = this.PRIORIDAD_CLASES[tarea.prioridad] || this.PRIORIDAD_CLASES.baja;
     return {
@@ -498,18 +413,7 @@ const Render = {
     };
   },
 
-  /**
-   * Genera el HTML de una tarjeta de tarea: checkbox, título, proyectos (varios chips), fecha, hora (si hay), badge de prioridad, botón gestionar proyectos y eliminar.
-   * Las tareas hechas llevan estilo tachado y borde verde; las pendientes usan el color de prioridad.
-   * @param {Object} tarea - Objeto tarea
-   * @param {number} tarea.id - Id de la tarea
-   * @param {string} tarea.titulo - Título
-   * @param {string[]} [tarea.proyectos] - Nombres de proyectos
-   * @param {string} tarea.prioridad - "alta" | "media" | "baja"
-   * @param {string} tarea.fecha - Fecha límite (YYYY-MM-DD o con hora)
-   * @param {boolean} tarea.hecha - Si está completada
-   * @returns {string} HTML de la tarjeta
-   */
+  // Una fila: checkbox, título, chips proyecto, fecha/hora, prioridad, ⊕, papelera.
   renderizarTarjeta(tarea) {
     const proyectos = State.proyectosDeTarea(tarea);
     const hora = this.extraerHora(tarea.fecha);

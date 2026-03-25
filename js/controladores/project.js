@@ -1,7 +1,4 @@
-/**
- * Controlador de proyectos: crear, eliminar y contar tareas pendientes por proyecto.
- * Los nombres del sidebar viven en memoria; las tareas se sincronizan con la API (`js/api/client.js`).
- */
+// Proyectos en el sidebar (memoria) + sync de tareas al api cuando borras uno.
 
 const ProyectosController = {
   agregar(nombre) {
@@ -35,7 +32,7 @@ const ProyectosController = {
         const indiceProyecto = tarea.proyectos.indexOf(nombre);
         if (indiceProyecto !== -1) tarea.proyectos.splice(indiceProyecto, 1);
       } else if (tarea.proyecto === nombre) {
-        // Formato antiguo (`proyecto` string): alinear memoria con el borrado lateral.
+        // Tarea vieja con un solo string proyecto: lo quitamos a mano.
         delete tarea.proyecto;
       }
     });
@@ -46,7 +43,7 @@ const ProyectosController = {
         Promise.all(
           State.tareas.map((tarea) =>
             ApiTareas.actualizar(tarea.id, {
-              // `proyectosDeTarea` cubre array y legacy; nunca hacer spread de `undefined`.
+              // Sin [...undefined]: legacy y array van por proyectosDeTarea.
               proyectos: State.proyectosDeTarea(tarea).filter((nombreProyecto) => nombreProyecto !== nombre),
             })
           )

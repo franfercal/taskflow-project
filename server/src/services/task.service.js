@@ -1,3 +1,5 @@
+// Tareas en memoria
+
 let tasks = [];
 
 let siguienteId = 1;
@@ -6,6 +8,7 @@ const SIN_FECHA = "Sin fecha";
 
 const PRIORIDADES_VALIDAS = new Set(["alta", "media", "baja"]);
 
+// Copia los datos y crea un array nuevo para evitar cambios accidentales
 function obtenerTodas() {
   return tasks.map((tarea) => ({
     ...tarea,
@@ -13,6 +16,7 @@ function obtenerTodas() {
   }));
 }
 
+// Deja solo strings no vacíos si no es array devuelve []
 function _normalizarProyectos(valor) {
   if (!Array.isArray(valor)) return [];
   return valor
@@ -49,6 +53,7 @@ function crearTarea(data) {
   };
 }
 
+// NOT_FOUND si el id no es número o no existe
 function eliminarTarea(id) {
   const idNumerico = Number(id);
   if (Number.isNaN(idNumerico)) {
@@ -63,6 +68,7 @@ function eliminarTarea(id) {
   tasks.splice(indice, 1);
 }
 
+// PATCH parcial mismas reglas de not found que arriba.
 function actualizarTarea(id, parches) {
   const idNumerico = Number(id);
   if (Number.isNaN(idNumerico)) {
@@ -100,6 +106,7 @@ function actualizarTarea(id, parches) {
   };
 }
 
+// Quita todas las hechas y te dice cuántas eran
 function eliminarCompletadas() {
   const antes = tasks.length;
   tasks = tasks.filter((tarea) => !tarea.hecha);

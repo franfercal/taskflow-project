@@ -1,9 +1,5 @@
 const Navegacion = {
-  /**
-   * Configura los listeners del sidebar: clic en vistas (nav-item) cambia filtro y cierra sidebar;
-   * botón hamburguesa abre/cierra el panel; clic fuera cierra el sidebar en móvil.
-   * @returns {void}
-   */
+  // Sidebar: vistas cambian filtro hamburguesa y click fuera cierran en móvil
   init() {
     const barraLateral = Utils.getElement("sidebar");
     const botonMenu = Utils.getElement("btn-menu");

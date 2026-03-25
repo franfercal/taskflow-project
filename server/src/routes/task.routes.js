@@ -1,23 +1,23 @@
-//Rutas HTTP de tareas
+// Router montado en /api/v1/tasks
 
 const express = require("express");
 const controladorTareas = require("../controllers/task.controller");
 
 const enrutador = express.Router();
 
-/** listar todas las tareas. */
+// GET …/tasks
 enrutador.get("/", controladorTareas.listarTareas);
 
-/** crear tarea */
+// POST …/tasks
 enrutador.post("/", controladorTareas.crearTarea);
 
-// Borrado de completadas.
+// DELETE …/tasks/completed tiene que ir antes que id, para no confundir con completed
 enrutador.delete("/completed", controladorTareas.eliminarTodasCompletadas);
 
-/** actualización parcial. */
+// PATCH …/tasks/:id
 enrutador.patch("/:id", controladorTareas.actualizarTarea);
 
-/** eliminar tarea. */
+// DELETE …/tasks/:id
 enrutador.delete("/:id", controladorTareas.eliminarTarea);
 
 module.exports = enrutador;

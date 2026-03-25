@@ -1,17 +1,8 @@
 const ModalProyectos = {
-  /** id de la tarea que se está editando (null cuando el modal está cerrado). */
   idTarea: null,
-  /** Elemento que tenía el foco antes de abrir el modal (para restaurarlo al cerrar). */
   _elementoConFocoAnterior: null,
-  /** Listener de teclado para focus trap (para poder eliminarlo al cerrar). */
   _listenerTeclado: null,
 
-  /**
-   * Abre el modal de gestión de proyectos para la tarea con el id dado.
-   * Rellena chips y select. Accesibilidad: aria-hidden, foco al primer enfocable y focus trap.
-   * @param {number} id - id de la tarea
-   * @returns {void}
-   */
   abrir(id) {
     const tarea = State.tareas.find((item) => item.id === id);
     if (!tarea) return;
@@ -31,10 +22,6 @@ const ModalProyectos = {
     }
   },
 
-  /**
-   * Oculta el modal, restaura el foco al elemento anterior y desactiva el focus trap.
-   * @returns {void}
-   */
   cerrar() {
     this.idTarea = null;
     const backdrop = Utils.getElement("modal-proyectos-backdrop");
@@ -49,20 +36,11 @@ const ModalProyectos = {
     this._elementoConFocoAnterior = null;
   },
 
-  /**
-   * Activa el focus trap usando la utilidad compartida (Escape cierra; Tab mantiene foco dentro).
-   * @param {HTMLElement} dialog - Contenedor del diálogo (elementos enfocables)
-   * @returns {void}
-   */
   _activarFocusTrap(dialog) {
     this._listenerTeclado = Utils.crearFocusTrap(dialog, () => this.cerrar());
     dialog.addEventListener("keydown", this._listenerTeclado);
   },
 
-  /**
-   * Quita el listener del focus trap del diálogo.
-   * @returns {void}
-   */
   _desactivarFocusTrap() {
     const dialog = Utils.getElement("modal-proyectos-dialog");
     if (dialog && this._listenerTeclado) {
@@ -71,11 +49,7 @@ const ModalProyectos = {
     }
   },
 
-  /**
-   * Rellena la lista de chips (proyectos actuales de la tarea) y el select con los proyectos
-   * a los que aún se puede añadir la tarea (los que no tiene ya).
-   * @returns {void}
-   */
+  // Chips con lo que ya tiene la tarea + select con proyectos que puede sumar
   actualizarContenido() {
     const tarea = State.tareas.find((item) => item.id === this.idTarea);
     if (!tarea) return;
@@ -86,7 +60,6 @@ const ModalProyectos = {
 
     if (!contenedorChips || !select) return;
 
-    // Chips: cada proyecto con botón para quitar
     if (proyectosActuales.length === 0) {
       contenedorChips.innerHTML =
         '<span class="font-mono text-xs text-gray-400 dark:text-gray-500 italic">Ningún proyecto. Añade uno abajo.</span>';
@@ -105,7 +78,6 @@ const ModalProyectos = {
       );
     }
 
-    // Select: proyectos que existen y que la tarea aún no tiene
     const proyectosDisponibles = State.proyectos.filter((nombre) => !proyectosActuales.includes(nombre));
     const valorActual = select.value;
     Utils.setHTML(
@@ -120,10 +92,6 @@ const ModalProyectos = {
     );
   },
 
-  /**
-   * Inicializa los event listeners del modal: cerrar, añadir proyecto, delegación para quitar proyecto.
-   * @returns {void}
-   */
   init() {
     const cerrar = () => this.cerrar();
     Utils.getElement("btn-close-modal-proyectos")?.addEventListener("click", cerrar);
@@ -146,7 +114,7 @@ const ModalProyectos = {
       }
     });
 
-    // Delegación: clic en "quitar" de un chip
+    // Clic en ✕ del chip → quitar proyecto de la tarea.
     Utils.getElement("modal-proyectos-chips")?.addEventListener("click", async (evento) => {
       const botonQuitar = evento.target.closest(".btn-quitar-proyecto");
       if (!botonQuitar || this.idTarea == null) return;
